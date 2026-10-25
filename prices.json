@@ -1,0 +1,143 @@
+{
+  "schema_version": "1.0",
+  "captured_at": "2026-10-26",
+  "currency_note": "DeepSeek 以 USD 计价，GLM 与 Kimi 以 CNY 计价，未做汇率换算",
+  "unit": "per 1,000,000 tokens",
+  "maintainer": {
+    "name": "l7shop",
+    "url": "https://l7shop.xyz",
+    "guide": "https://huangjinpeng216.github.io/ai-api-relay-pricing-cn/"
+  },
+  "disclaimer": "Prices are copied from official pricing pages on captured_at. They change without notice. Always verify against the vendor's own documentation before billing decisions.",
+  "providers": [
+    {
+      "provider": "deepseek",
+      "display_name": "DeepSeek",
+      "currency": "USD",
+      "source_url": "https://api-docs.deepseek.com/quick_start/pricing/",
+      "captured_at": "2026-10-26",
+      "base_urls": {
+        "openai": "https://api.deepseek.com",
+        "anthropic": "https://api.deepseek.com/anthropic"
+      },
+      "models": [
+        {
+          "model_id": "deepseek-flash",
+          "aliases": ["deepseek-v4.1-flash-1017", "deepseek-v4-flash"],
+          "display_name": "DeepSeek V4.1-Flash-1017",
+          "context_tokens": 1000000,
+          "max_output_tokens": 384000,
+          "pricing": {
+            "input_cache_hit": { "off_peak": 0.003, "peak": 0.006 },
+            "input_cache_miss": { "off_peak": 0.15, "peak": 0.30 },
+            "output": { "off_peak": 0.60, "peak": 1.20 }
+          },
+          "concurrency_limit": 2500,
+          "features": { "json_output": true, "tool_calls": true, "responses_api": true, "anthropic_api": true, "vision": true }
+        },
+        {
+          "model_id": "deepseek-v4-pro-0813",
+          "aliases": [],
+          "display_name": "DeepSeek V4-Pro-0813",
+          "context_tokens": 1000000,
+          "max_output_tokens": 384000,
+          "pricing": {
+            "input_cache_hit": { "off_peak": 0.022, "peak": 0.044 },
+            "input_cache_miss": { "off_peak": 0.66, "peak": 1.32 },
+            "output": { "off_peak": 1.98, "peak": 3.96 }
+          },
+          "concurrency_limit": 500,
+          "features": { "json_output": true, "tool_calls": true, "responses_api": true, "anthropic_api": true, "vision": false }
+        }
+      ],
+      "peak_hours_utc": ["01:00-04:00", "06:00-10:00"],
+      "peak_hours_note": "Monday to Friday, excluding Chinese public holidays. Off-peak is half of peak price."
+    },
+    {
+      "provider": "zhipu",
+      "display_name": "GLM / 智谱",
+      "currency": "CNY",
+      "source_url": "https://open.bigmodel.cn/pricing",
+      "captured_at": "2026-10-26",
+      "models": [
+        {
+          "model_id": "glm-5.3",
+          "aliases": [],
+          "display_name": "GLM-5.3",
+          "context_tokens": 1000000,
+          "max_output_tokens": 128000,
+          "pricing": {
+            "input": 8.0,
+            "output": 28.0,
+            "input_cache_hit": 2.0
+          },
+          "modalities": ["text"]
+        },
+        {
+          "model_id": "glm-5.3-flash",
+          "aliases": ["glm-5.3-flashx"],
+          "display_name": "GLM-5.3-Flash",
+          "context_tokens": 1000000,
+          "max_output_tokens": 128000,
+          "pricing": {
+            "input": 0.8,
+            "output": 2.8,
+            "input_cache_hit": 0.23
+          },
+          "modalities": ["text", "image", "video", "file"]
+        }
+      ]
+    },
+    {
+      "provider": "moonshot",
+      "display_name": "Kimi / 月之暗面",
+      "currency": "CNY",
+      "source_url": "https://platform.moonshot.cn/docs/pricing/chat",
+      "captured_at": "2026-10-26",
+      "models": [
+        {
+          "model_id": "kimi-k3.1-pro",
+          "aliases": [],
+          "display_name": "Kimi K3.1 Pro",
+          "pricing": {
+            "input": 13.0,
+            "output": 68.0,
+            "input_cache_hit": 1.3,
+            "cache_write_5min": 13.0,
+            "cache_write_1h": 26.0
+          }
+        },
+        {
+          "model_id": "kimi-k3",
+          "aliases": [],
+          "display_name": "Kimi K3",
+          "pricing": {
+            "input": 20.0,
+            "output": 100.0,
+            "input_cache_hit": 2.0,
+            "cache_write_5min": 20.0,
+            "cache_write_1h": 40.0
+          }
+        },
+        {
+          "model_id": "kimi-k2.7-code",
+          "aliases": [],
+          "display_name": "Kimi K2.7 Code",
+          "pricing": { "input": 6.5, "output": 27.0, "input_cache_hit": 1.3 }
+        },
+        {
+          "model_id": "kimi-k2.6",
+          "aliases": [],
+          "display_name": "Kimi K2.6",
+          "pricing": { "input": 6.5, "output": 27.0, "input_cache_hit": 1.1 }
+        }
+      ]
+    }
+  ],
+  "observations": [
+    "DeepSeek Flash cache-hit input is 50x cheaper than cache-miss input.",
+    "DeepSeek off-peak price is half of peak price; shifting batch jobs saves 50% with no tradeoff.",
+    "GLM-5.3-Flash is 10x cheaper than GLM-5.3 on input.",
+    "Kimi K3 output (CNY 100) is more expensive than Kimi K3.1 Pro output (CNY 68) - do not infer price from version numbers."
+  ]
+}
