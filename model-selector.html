@@ -49,7 +49,21 @@ a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
 .note{font-size:14px;color:var(--mut);border-top:1px solid var(--line);margin-top:34px;padding-top:14px}
 .hide{display:none}
 #pickWarn{white-space:pre-line}
-</style>
+/* MOBILE_FIX: 窄屏下表格可横向滚动、长代码可换行，避免撑破页面 */
+@media (max-width:640px){
+  .wrap{padding:28px 14px 64px}
+  h1{font-size:23px;line-height:1.35}
+  h2{font-size:18px;margin:30px 0 10px}
+  h3{font-size:16px}
+  body{font-size:15.5px;line-height:1.75}
+  table{display:block;width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;white-space:nowrap}
+  th,td{padding:9px 10px;font-size:13.5px}
+  code{word-break:break-all}
+  pre{max-width:100%;overflow-x:auto}
+  pre code{word-break:normal}
+  img{max-width:100%;height:auto}
+  ul,ol{padding-left:20px}
+}</style>
 </head>
 <body><div class="wrap">
 
