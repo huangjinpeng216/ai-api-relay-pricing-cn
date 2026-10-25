@@ -38,6 +38,15 @@ a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
   pre code{word-break:normal}
   img{max-width:100%;height:auto}
   ul,ol{padding-left:20px}
+}.pagenav{border-top:1px solid var(--line);margin-top:34px;padding-top:16px}
+.pagenav>p{font-size:14px;color:var(--mut);margin:0 0 8px}
+.pagenav>ul{list-style:none;padding:0;margin:0;display:flex;flex-wrap:wrap;gap:8px 18px}
+.pagenav>ul li{font-size:14.5px}
+.pagenav a{color:var(--acc);text-decoration:none}
+.pagenav a:hover{text-decoration:underline}
+@media (max-width:640px){
+  .pagenav>ul{gap:6px 14px}
+  .pagenav>ul li{font-size:13.5px}
 }</style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"GLM-5.3 / Kimi K3 API 怎么接入｜模型定位、上下文与调用示例（2026）","description":"GLM-5.3 与 Kimi K3 的定位差异、适用场景、上下文长度、API 调用方式与模型名写法。附同一段任务在两款模型上的选择建议，以及接入第三方网关时的配置要点。","inLanguage":"zh-CN","datePublished":"2026-10-26","dateModified":"2026-10-26","author":{"@type":"Organization","name":"l7shop","url":"https://l7shop.xyz"},"mainEntityOfPage":{"@type":"WebPage","@id":"https://huangjinpeng216.github.io/ai-api-relay-pricing-cn/glm-kimi-api.html"}}</script>
 </head>
@@ -174,6 +183,18 @@ kimi-k3</code></pre>
 <li>批量任务前先跑 10 次，看延迟分布和失败率</li>
 </ul>
 
+<nav class="pagenav">
+  <p>相关内容</p>
+  <ul>
+    <li><a href="./">比价与选站指南</a></li>
+    <li><a href="api-price-table.html">官方价格表</a></li>
+    <li><a href="cost-calculator.html">成本计算器</a></li>
+    <li><a href="model-selector.html">模型选择器</a></li>
+    <li><a href="api-relay-pitfalls.html">避雷指南</a></li>
+    <li><a href="client-setup.html">客户端配置</a></li>
+    <li><a href="api-error-codes.html">报错大全</a></li>
+  </ul>
+</nav>
 <div class="note">
 <p>本页由 <a href="https://l7shop.xyz" rel="nofollow">l7shop.xyz</a> 维护。模型能力与价格以各家官方公告为准，本页仅作选型参考。</p>
 <p><a href="./">← 返回比价与选站指南</a>　｜　<a href="deepseek-api-price.html">DeepSeek 价格怎么算 →</a></p>
