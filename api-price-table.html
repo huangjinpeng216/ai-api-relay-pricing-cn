@@ -182,6 +182,29 @@ a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
 <li><strong>最后比稳定性。</strong>价格只是一维，稳定性、协议兼容、日志可查同样重要，见 <a href="./">选站五项标准</a>。</li>
 </ol>
 
+<h2>六、给开发者：机器可读的价格数据</h2>
+<p>上面这些价格同时提供 JSON 版本，方便程序直接读取，不用手工抄写。</p>
+<table>
+<tr><th>用途</th><th>地址</th></tr>
+<tr><td>价格数据</td><td><code>https://huangjinpeng216.github.io/ai-api-relay-pricing-cn/prices.json</code></td></tr>
+</table>
+<p><strong>数据结构要点：</strong></p>
+<ul>
+<li>按 provider 分组，每家带 <code>source_url</code> 和 <code>captured_at</code>，可追溯</li>
+<li>DeepSeek 区分高峰 / 低谷价，用 <code>off_peak</code> / <code>peak</code> 两个字段</li>
+<li>单位统一为「每百万 token」</li>
+<li>DeepSeek 用 USD，GLM 与 Kimi 用 CNY，字段 <code>currency</code> 标明，未做汇率换算</li>
+</ul>
+<p class="warn">⚠ 数据只反映抓取当日的官方公示价。价格会调整，生产环境请自行复核，不要直接用于计费。</p>
+<p class="sub">示例：读取全部模型的最小输入价</p>
+<pre><code>const r = await fetch('https://huangjinpeng216.github.io/ai-api-relay-pricing-cn/prices.json');
+const { providers } = await r.json();
+for (const p of providers) {
+  for (const m of p.models) {
+    const price = m.pricing.input ?? m.pricing.input_cache_miss?.off_peak;
+    console.log(p.provider, m.model_id, price, p.currency);
+  }
+}</code></pre>
 <div class="note">
 <p>本页由 <a href="https://l7shop.xyz" rel="nofollow">l7shop.xyz</a> 维护。所有官方价均抓自各家官方定价页（2026-10-26），折算值为数学换算。价格可能随时调整，请以官方文档和控制台账单为准。</p>
 <p><a href="./">← 返回 AI API 中转站比价与选站指南</a>　·　<a href="cost-calculator.html">成本计算器</a>　·　<a href="deepseek-api-price.html">DeepSeek 计费详解</a></p>
