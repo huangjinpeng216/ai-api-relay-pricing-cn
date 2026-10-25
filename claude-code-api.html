@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Claude Code / Cursor 接入第三方 API 配置教程｜Anthropic 兼容接口怎么填（2026）</title>
+<meta name="description" content="Claude Code、Cursor、Cline 想用第三方 API 中转怎么办？Anthropic 兼容接口的 base_url、api key、模型名怎么填，环境变量和配置文件两种方式，以及 401 / model not found 等常见报错排查。">
+<meta name="keywords" content="Claude Code 第三方API,Anthropic 兼容接口,Claude Code base_url,Cursor 自定义API,claude code 配置,API 中转 配置">
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="https://huangjinpeng216.github.io/ai-api-relay-pricing-cn/claude-code-api.html">
+<style>
+:root{--bg:#0f172a;--card:#1e293b;--line:#334155;--tx:#e2e8f0;--mut:#94a3b8;--acc:#38bdf8}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.75 -apple-system,"PingFang SC","Microsoft YaHei",sans-serif}
+.wrap{max-width:820px;margin:0 auto;padding:48px 20px 80px}
+h1{font-size:30px;line-height:1.35;margin:0 0 10px}
+h2{font-size:21px;margin:40px 0 12px;padding-left:12px;border-left:4px solid var(--acc)}
+h3{font-size:17px;margin:22px 0 8px;color:#cbd5e1}
+p,li{color:#cbd5e1}.sub{color:var(--mut);margin:0 0 28px}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:15px}
+th,td{border:1px solid var(--line);padding:10px 12px;text-align:left}th{background:#172033}
+code{background:#0b1220;border:1px solid var(--line);border-radius:6px;padding:2px 6px;font-size:14px;color:#7dd3fc}
+pre{background:#0b1220;border:1px solid var(--line);border-radius:10px;padding:16px;overflow:auto}
+pre code{border:0;background:none;padding:0}
+a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 22px;margin:16px 0}
+.note{font-size:14px;color:var(--mut);border-top:1px solid var(--line);margin-top:34px;padding-top:14px}
+</style>
+</head>
+<body><div class="wrap">
+
+<h1>Claude Code / Cursor 接入第三方 API 怎么配</h1>
+<p class="sub">Anthropic 兼容接口 · base_url 与环境变量 · 常见报错排查　<span>｜<a href="./">返回比价总览</a></span></p>
+
+<h2>一、先搞清楚：你的工具用哪种协议</h2>
+<table>
+<tr><th>工具</th><th>使用的协议</th><th>需要什么</th></tr>
+<tr><td>Claude Code</td><td>Anthropic Messages</td><td>站点必须提供 Anthropic 兼容接口</td></tr>
+<tr><td>Cursor</td><td>OpenAI 或 Anthropic（可切）</td><td>OpenAI 格式最通用</td></tr>
+<tr><td>Cline / Roo Code</td><td>OpenAI 或 Anthropic</td><td>同上</td></tr>
+<tr><td>NextChat / LobeChat / Cherry Studio</td><td>OpenAI</td><td>填 base_url 即可</td></tr>
+</table>
+<p><strong>关键点：</strong>只提供 OpenAI 格式的站点，Claude Code 用不了。这就是为什么选站时要看「双协议」。</p>
+
+<h2>二、Claude Code 的两种配法</h2>
+
+<h3>方式一：环境变量（推荐，最稳）</h3>
+<pre><code># macOS / Linux
+export ANTHROPIC_BASE_URL="https://你的站点域名/api"
+export ANTHROPIC_AUTH_TOKEN="你的 key"
+claude
+
+# Windows PowerShell
+$env:ANTHROPIC_BASE_URL="https://你的站点域名/api"
+$env:ANTHROPIC_AUTH_TOKEN="你的 key"
+claude</code></pre>
+<p class="sub">注意：不同中转站的路径前缀不一样，常见的是 <code>/api</code> 或 <code>/v1</code>，以站点文档为准。</p>
+
+<h3>方式二：配置文件</h3>
+<p>在用户目录下创建 <code>~/.claude/settings.json</code>：</p>
+<pre><code>{
+  "env": {
+    "ANTHROPIC_BASE_URL": "https://你的站点域名/api",
+    "ANTHROPIC_AUTH_TOKEN": "你的 key"
+  }
+}</code></pre>
+
+<h2>三、OpenAI 格式工具的通用三步</h2>
+<p>NextChat、LobeChat、Cherry Studio、Cline 这类，配置项永远是这三个：</p>
+<table>
+<tr><th>项</th><th>填什么</th><th>常见错误</th></tr>
+<tr><td>Base URL</td><td>站点地址 + <code>/v1</code></td><td>少了 /v1 或多一个斜杠</td></tr>
+<tr><td>API Key</td><td><code>sk-</code> 开头那串</td><td>复制时带了空格或换行</td></tr>
+<tr><td>模型名</td><td>和站点列表完全一致</td><td>自己猜名字、拼错</td></tr>
+</table>
+
+<h2>四、报错对照表</h2>
+<table>
+<tr><th>报错</th><th>真实原因</th><th>怎么修</th></tr>
+<tr><td><code>401 Unauthorized</code></td><td>Key 无效，或 base_url 路径不对</td><td>检查 key 有无空格；确认路径前缀</td></tr>
+<tr><td><code>404 Not Found</code></td><td>路径多了/少了前缀</td><td>试 <code>/v1</code>、<code>/api</code> 两种</td></tr>
+<tr><td><code>model not found</code></td><td>模型名不匹配，或该分组无权限</td><td>复制站点的准确模型名</td></tr>
+<tr><td><code>429 Too Many Requests</code></td><td>并发或额度超限</td><td>降低并发，查余额</td></tr>
+<tr><td>能连但输出很慢</td><td>上游拥堵或模型选错</td><td>换 Flash 类模型试</td></tr>
+</table>
+
+<h2>五、两个容易踩的坑</h2>
+<ul>
+<li><strong>把 key 写进代码提交。</strong>推到 GitHub 后几分钟内就会被爬虫扫到，余额可能被刷光。一律用环境变量或本地配置文件，并把配置文件加进 .gitignore。</li>
+<li><strong>只看倍率不看协议。</strong>买了只支持 OpenAI 格式的站，结果 Claude Code 用不了，钱白充。下单前先确认双协议。</li>
+</ul>
+
+<h2>六、验证是否配好</h2>
+<p>最快的验证方式：发一句最简单的提问，看是否有正常回复。有回复说明链路通了；报错就按上面的对照表查。</p>
+<p>更严谨的做法是跑一段需要多步推理的 prompt，确认输出质量和官方一致——这能顺便验证是不是被<strong>掺水降智</strong>。</p>
+
+<div class="note">
+<p>本页由 <a href="https://l7shop.xyz" rel="nofollow">l7shop.xyz</a> 维护，内容为信息汇总，不构成推荐或担保。配置细节请以各工具官方文档为准。</p>
+<p><a href="./">← 返回 AI API 中转站比价与选站指南</a>　｜　<a href="./deepseek-api-price.html">DeepSeek API 价格怎么算 →</a></p>
+</div>
+
+</div></body></html>
