@@ -28,6 +28,7 @@
 | [中转站推荐与比价](https://huangjinpeng216.github.io/ai-api-relay-pricing-cn/api-relay-recommend.html) | 2026 倍率行情、按场景怎么选、20 分钟验证流程、为什么不列一堆站 |
 | [中转站避雷指南](https://huangjinpeng216.github.io/ai-api-relay-pricing-cn/api-relay-pitfalls.html) | 跑路、掺水降智、偷偷限流、扣费不透明、key 盗刷、**网站正常但 API 全挂** |
 | [中转站 vs 官方直连](https://huangjinpeng216.github.io/ai-api-relay-pricing-cn/api-relay-vs-official.html) | 价格、延迟、可用性、数据流向的对比与决策清单 |
+| [团队采购要问清楚的 12 个问题](https://huangjinpeng216.github.io/ai-api-relay-pricing-cn/team-procurement.html) | 发票、对公转账、并发上限、SLA、日志留存、数据流向、法律主体、迁移成本 |
 
 ### 配置与排错
 
