@@ -99,6 +99,15 @@ a:hover{text-decoration:underline}
   pre code{word-break:normal}
   img{max-width:100%;height:auto}
   ul,ol{padding-left:20px}
+}.pagenav{border-top:1px solid var(--line);margin-top:34px;padding-top:16px}
+.pagenav>p{font-size:14px;color:var(--mut);margin:0 0 8px}
+.pagenav>ul{list-style:none;padding:0;margin:0;display:flex;flex-wrap:wrap;gap:8px 18px}
+.pagenav>ul li{font-size:14.5px}
+.pagenav a{color:var(--acc);text-decoration:none}
+.pagenav a:hover{text-decoration:underline}
+@media (max-width:640px){
+  .pagenav>ul{gap:6px 14px}
+  .pagenav>ul li{font-size:13.5px}
 }</style>
 </head>
 <body>
@@ -214,6 +223,17 @@ a:hover{text-decoration:underline}
 <li><a href="claude-code-api.html"><strong>Claude Code / Cursor 接入第三方 API</strong></a> —— Anthropic 兼容接口、环境变量、报错对照表</li>
 </ul>
 
+<nav class="pagenav">
+  <p>相关内容</p>
+  <ul>
+    <li><a href="api-price-table.html">官方价格表</a></li>
+    <li><a href="cost-calculator.html">成本计算器</a></li>
+    <li><a href="model-selector.html">模型选择器</a></li>
+    <li><a href="api-relay-pitfalls.html">避雷指南</a></li>
+    <li><a href="client-setup.html">客户端配置</a></li>
+    <li><a href="api-error-codes.html">报错大全</a></li>
+  </ul>
+</nav>
 <div class="note"><p>本页内容为信息汇总，不构成推荐或担保。使用第三方 API 服务涉及数据处理和内容合规问题，请自行评估业务场景。</p>
 <p>项目地址：<a href="https://github.com/huangjinpeng216/ai-api-relay-pricing-cn">github.com/huangjinpeng216/ai-api-relay-pricing-cn</a>　｜　最后更新：2026-10</p>
 </div>
