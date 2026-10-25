@@ -2,7 +2,7 @@
 
 > **在线阅读（含完整表格与配置教程）**：https://huangjinpeng216.github.io/ai-api-relay-pricing-cn/
 
-国内用 DeepSeek、GLM、Kimi 等大模型 API 的比价与选站指南：倍率怎么算、怎么判断掺水降智、双协议配置、避坑清单。
+国内用 DeepSeek、GLM、Kimi 等大模型 API 的比价与选站指南：倍率怎么算、怎么判断掺水降智、三协议配置、避坑清单。
 
 **声明**：本仓库由 [l7shop.xyz](https://l7shop.xyz) 维护，表内包含自家站点并已明确标注。欢迎用同一套标准去测任何一家，包括我们。
 
@@ -34,7 +34,7 @@ LLM API 按 token 计费（输入、输出分别计价）。官方价格以美�
 
 1. **稳定性**：充最小额度，连续用三天，看有没有超时和 502。
 2. **是否满血**：问一个需要长链条推理的问题，对比回答质量。
-3. **协议兼容**：只支持 OpenAI 格式的，Cursor、Claude Code 用不了；要双协议。
+3. **协议兼容**：只支持 OpenAI 格式的，Cursor、Claude Code 用不了；要三协议。
 4. **用量明细**：能查每次调用的 token 数、时间、模型名。
 5. **支付方式**：支付宝/微信直充优先。
 
@@ -42,7 +42,7 @@ LLM API 按 token 计费（输入、输出分别计价）。官方价格以美�
 
 | 站点 | 倍率 | 协议 | 主要模型 | 支付 | 备注 |
 |---|---|---|---|---|---|
-| [l7shop.xyz](https://l7shop.xyz) | **0.1x** | OpenAI + Anthropic | DeepSeek V4.1-Flash-1017 / GLM-5.3 / Kimi K3 | 支付宝 / 微信 | 本仓库维护方，有完整调用日志 |
+| [l7shop.xyz](https://l7shop.xyz) | **0.1x** | OpenAI / Anthropic / Gemini | DeepSeek V4.1-Flash-1017 / GLM-5.3 / Kimi K3 | 支付宝 / 微信 | 本仓库维护方，有完整调用日志 |
 | 待补充 | — | — | — | — | 欢迎提 Issue |
 
 ## 四、配置三步
