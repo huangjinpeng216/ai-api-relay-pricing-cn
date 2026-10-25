@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI API 常见报错大全：401 / 429 / model not found / insufficient_quota 怎么解决</title>
+<meta name="description" content="调用大模型 API 时的常见报错及解决方式：401 Unauthorized、404 Not Found、429 Too Many Requests、model not found、insufficient_quota、context_length_exceeded、invalid_request_error。按报错逐一给出原因和修法。">
+<meta name="keywords" content="API 401,API 429,model not found,insufficient_quota,context_length_exceeded,OpenAI 报错,API 调用失败,中转站报错">
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="https://huangjinpeng216.github.io/ai-api-relay-pricing-cn/api-error-codes.html">
+<style>
+:root{--bg:#0f172a;--card:#1e293b;--line:#334155;--tx:#e2e8f0;--mut:#94a3b8;--acc:#38bdf8;--warn:#f97316}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.75 -apple-system,"PingFang SC","Microsoft YaHei",sans-serif}
+.wrap{max-width:860px;margin:0 auto;padding:48px 20px 80px}
+h1{font-size:29px;line-height:1.4;margin:0 0 10px}
+h2{font-size:20px;margin:36px 0 10px;padding-left:12px;border-left:4px solid var(--acc)}
+h3{font-size:17px;margin:24px 0 6px;color:#e2e8f0}
+p,li{color:#cbd5e1}.sub{color:var(--mut);margin:0 0 26px}
+code{background:#0b1220;border:1px solid var(--line);border-radius:6px;padding:2px 6px;font-size:14px;color:#7dd3fc}
+pre{background:#0b1220;border:1px solid var(--line);border-radius:10px;padding:14px;overflow:auto}
+pre code{border:0;background:none;padding:0}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:15px}
+th,td{border:1px solid var(--line);padding:10px 12px;text-align:left;vertical-align:top}th{background:#172033}
+a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 20px;margin:14px 0}
+.note{font-size:14px;color:var(--mut);border-top:1px solid var(--line);margin-top:32px;padding-top:14px}
+</style>
+</head>
+<body><div class="wrap">
+
+<h1>AI API 常见报错大全</h1>
+<p class="sub">按报错信息查原因和修法　<span>｜<a href="./">返回比价与选站指南</a></span></p>
+
+<div class="card">
+<p><strong>排查顺序建议：</strong>先确认 base_url 路径 → 再确认 key 有效 → 再确认模型名 → 最后看额度与并发。绝大多数问题出在前两步。</p>
+</div>
+
+<h2>401 Unauthorized</h2>
+<p><strong>含义：</strong>认证失败，服务端不认你的 key。</p>
+<p><strong>常见原因：</strong></p>
+<ul>
+<li>Key 复制时带了空格或换行</li>
+<li>base_url 指向了错误的路径（有的站是 <code>/v1</code>，有的是 <code>/api</code>）</li>
+<li>Key 已被删除或停用</li>
+<li>用了别家站的 key</li>
+</ul>
+<p><strong>怎么修：</strong>重新复制 key（不要手动输入），确认路径前缀，用 curl 直接测一次：</p>
+<pre><code>curl https://你的站点/v1/models -H "Authorization: Bearer sk-xxx"</code></pre>
+
+<h2>404 Not Found</h2>
+<p><strong>含义：</strong>路径不存在。</p>
+<p><strong>常见原因：</strong></p>
+<ul>
+<li>base_url 多了或少了 <code>/v1</code></li>
+<li>结尾多了斜杠，变成 <code>//v1</code></li>
+<li>把 <code>/chat/completions</code> 也写进了 base_url（客户端会自动拼）</li>
+</ul>
+<p><strong>怎么修：</strong>base_url 只填到版本号为止，例如 <code>https://站点域名/v1</code>。</p>
+
+<h2>model not found</h2>
+<p><strong>含义：</strong>模型名不存在或当前分组无权限。</p>
+<p><strong>常见原因：</strong></p>
+<ul>
+<li>模型名拼错（大小写、连字符、版本号）</li>
+<li>模型名是你猜的，站点实际叫法不同</li>
+<li>该模型在你当前分组未开放</li>
+</ul>
+<p><strong>怎么修：</strong>从站点文档或控制台的模型列表里复制准确名称。可以调 <code>/v1/models</code> 拉一遍可用列表。</p>
+
+<h2>429 Too Many Requests</h2>
+<p><strong>含义：</strong>请求过于频繁，触发限流。</p>
+<p><strong>常见原因：</strong></p>
+<ul>
+<li>并发太高</li>
+<li>单位时间请求数超限</li>
+<li>余额不足时部分站也会返回 429（当作软拒绝）</li>
+</ul>
+<p><strong>怎么修：</strong>加指数退避重试，降到 2~3 并发测试；查余额。</p>
+<pre><code>for (let i = 0; i < 5; i++) {
+  try { return await call(); }
+  catch (e) { if (e.status !== 429) throw e;
+    await sleep(1000 * 2 ** i); }
+}</code></pre>
+
+<h2>insufficient_quota / 余额不足</h2>
+<p><strong>含义：</strong>额度用完。</p>
+<p><strong>怎么修：</strong>查账户余额和分组额度；确认是否被其他项目共用同一个 key 消耗掉了。</p>
+
+<h2>context_length_exceeded</h2>
+<p><strong>含义：</strong>输入超长，超过模型上下文窗口。</p>
+<p><strong>常见原因：</strong>历史对话全量拼接、贴了超长文档、把整段代码塞进去。</p>
+<p><strong>怎么修：</strong>裁剪历史、分段处理长文档、改用长上下文模型。</p>
+
+<h2>invalid_request_error</h2>
+<p><strong>含义：</strong>请求体格式不对。</p>
+<p><strong>常见原因：</strong></p>
+<ul>
+<li><code>messages</code> 结构错误（缺 role 或 content）</li>
+<li>传了该模型不支持的参数（如 <code>temperature</code> 超范围）</li>
+<li>JSON 序列化问题，中文没做 UTF-8</li>
+</ul>
+
+<h2>连接超时 / 502 / 504</h2>
+<p><strong>含义：</strong>网关或上游不可用。</p>
+<p><strong>区分方法：</strong></p>
+<table>
+<tr><th>现象</th><th>大概率原因</th></tr>
+<tr><td>所有模型都超时</td><td>站点网关故障，或你的网络问题</td></tr>
+<tr><td>只有某个模型超时</td><td>该模型上游拥堵</td></tr>
+<tr><td>白天正常、晚上超时</td><td>站点限流或上游高峰期</td></tr>
+<tr><td>偶发 502，重试能过</td><td>上游不稳定，加自动重试即可</td></tr>
+</table>
+
+<h2>流式输出中断</h2>
+<p><strong>含义：</strong><code>stream: true</code> 时连接被中途关闭。</p>
+<p><strong>常见原因：</strong>代理层超时设置过短、SSE 未被正确透传、客户端没处理 <code>data: [DONE]</code>。</p>
+
+<h2>一张速查表</h2>
+<table>
+<tr><th>报错</th><th>第一反应</th></tr>
+<tr><td>401</td><td>查 key 空格、查 base_url 路径</td></tr>
+<tr><td>404</td><td>查 /v1 前缀、去掉多余斜杠</td></tr>
+<tr><td>model not found</td><td>复制准确模型名</td></tr>
+<tr><td>429</td><td>降并发、加退避、查余额</td></tr>
+<tr><td>insufficient_quota</td><td>充值或换 key</td></tr>
+<tr><td>context_length_exceeded</td><td>裁上下文</td></tr>
+<tr><td>超时/502</td><td>重试 + 换模型 + 换站</td></tr>
+</table>
+
+<div class="note">
+<p>本页由 <a href="https://l7shop.xyz" rel="nofollow">l7shop.xyz</a> 维护。报错含义以 OpenAI / Anthropic 官方规范为准，各家兼容实现可能有差异。</p>
+<p><a href="./">← 返回 AI API 中转站比价与选站指南</a>　｜　<a href="claude-code-api.html">配置教程 →</a></p>
+</div>
+
+</div></body></html>
