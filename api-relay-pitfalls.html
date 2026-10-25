@@ -112,6 +112,64 @@ a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
 <p><strong>识别方法：</strong>充值前先在群里问一个具体的技术问题（比如「你们 Anthropic 端点支持流式吗」），看回复质量。答不上来或敷衍的，出问题时也别指望。</p>
 </div>
 
+<h2>坑八：网站正常，但 API 全挂</h2>
+<div class="card">
+<p><strong>表现：</strong>网站能打开，登录页能显示，但一调用就报错——而且报的不是 401 或 429，是 <code>404 page not found</code> 或 502。</p>
+<p><strong>为什么危险：</strong>用户打开网页一切正常，第一反应是「我配置错了吧」，于是开始改 base_url、换 key、重装客户端，<strong>折腾半小时才发现是服务方的问题</strong>。服务方那边如果只监控「网站能不能打开」，同样看不见。</p>
+<p><strong>识别方法：</strong>见下方「三行命令判断服务是否真的活着」。</p>
+</div>
+
+<h2>三行命令判断服务是否真的活着</h2>
+<p>别打开网页看，直接用命令行打三个地方：</p>
+
+<pre><code># 1. 首页活着吗（只看这个没有意义，但可作为对照）
+curl -o /dev/null -w 'home:   %{http_code}\n' https://站点/
+
+# 2. API 端点活着吗 —— 关键判据
+curl -o /dev/null -w 'api:    %{http_code}\n' https://站点/v1/models
+
+# 3. 后台接口活着吗
+curl -o /dev/null -w 'admin:  %{http_code}\n' https://站点/api/v1/status</code></pre>
+
+<h3>怎么读这三个结果</h3>
+<table>
+<tr><th>api 返回</th><th>含义</th><th>该做什么</th></tr>
+<tr><td><b>401</b></td><td>正常。路由存在，只是没带 key</td><td>没问题</td></tr>
+<tr><td><b>403</b></td><td>正常。key 无效或无权限</td><td>检查 key</td></tr>
+<tr><td><b>404</b></td><td><b>故障。路由不存在</b></td><td>换站，或等它修</td></tr>
+<tr><td><b>502 / 504</b></td><td><b>故障。上游挂了</b></td><td>换站</td></tr>
+<tr><td><b>200</b></td><td>可疑。正常情况未鉴权不该返回 200</td><td>确认是不是被降级成免费模型了</td></tr>
+<tr><td><b>000</b></td><td>连不上</td><td>检查网络 / 站点是否下线</td></tr>
+</table>
+
+<p class="sub">记住这个判据：<strong>未鉴权时返回 401 才是正常的</strong>。返回 404 说明它的 API 路由根本不存在，这时候你填什么 key 都没用。</p>
+
+<h2>进阶：用响应头区分它背后有几个服务</h2>
+<p>有些站会把不同路径转发到不同后端，出故障时表现不一致。用响应头里的指纹能看出来：</p>
+
+<pre><code># 主应用通常会给页面注入一次性 nonce（每次请求都不同）
+curl -I https://站点/            | grep -i 'content-security-policy'
+curl -I https://站点/v1/models   | grep -i 'content-security-policy'</code></pre>
+
+<p>如果第一条有 <code>'nonce-xxxx'</code>、第二条没有，说明<strong>这两条路径根本不是同一个后端在处理</strong>——很可能是旧进程没关干净，或者反向代理配错了。</p>
+
+<h2>为什么要自己测一遍</h2>
+<p>中转站宣传的「可用率 99.9%」你无法验证。但上面这几条命令你能自己跑，而且只需要 10 秒。</p>
+
+<table>
+<tr><th>它说的</th><th>你能验证的</th></tr>
+<tr><td>可用率 99.9%</td><td>现在这一刻能不能用</td></tr>
+<tr><td>平均延迟 200ms</td><td>你自己测的延迟是多少</td></tr>
+<tr><td>满血不降智</td><td>同一段 prompt 输出质量差多少</td></tr>
+<tr><td>7×24 技术支持</td><td>在群里问个技术问题，多久有人回</td></tr>
+</table>
+
+<div class="card">
+<p><strong>建议：</strong>把这三行存成脚本，每天跑一次并记录。连续两周的数据比任何宣传都可靠——<strong>你会看到它在什么时段不稳，而不只是「现在能不能用」</strong>。</p>
+<pre><code># 存成 check.sh，加到 crontab
+echo "$(date '+%F %T'),$(curl -s -o /dev/null -w '%{http_code}' https://站点/v1/models)" \
+  >> ~/relay-uptime.log</code></pre>
+</div>
 <h2>一份 20 分钟的验证流程</h2>
 <p>上面七个坑，用下面这套流程能筛掉大部分。顺序不能乱：</p>
 <table>
