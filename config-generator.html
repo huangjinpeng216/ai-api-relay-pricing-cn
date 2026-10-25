@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>API 客户端配置生成器｜Cherry Studio / NextChat / Cline / Claude Code（2026）</title>
+<meta name="description" content="选择你的客户端，填入站点地址和 key，直接生成可用的配置：JSON 配置片段、环境变量、base_url 填法。覆盖 Cherry Studio、NextChat、LobeChat、Cline、Cursor、Claude Code，含常见填错方式对照。">
+<meta name="keywords" content="Cherry Studio 配置,NextChat 配置,Cline 配置,Claude Code base_url,API 中转站 配置,OpenAI 兼容 base_url">
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="https://huangjinpeng216.github.io/ai-api-relay-pricing-cn/config-generator.html">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"API 客户端配置生成器","applicationCategory":"UtilitiesApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"CNY"},"description":"根据客户端类型生成正确的 base_url、环境变量和配置文件片段。","inLanguage":"zh-CN"}</script>
+<style>
+:root{--bg:#0f172a;--card:#1e293b;--line:#334155;--tx:#e2e8f0;--mut:#94a3b8;--acc:#38bdf8;--warn:#fbbf24}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.75 -apple-system,"PingFang SC","Microsoft YaHei",sans-serif}
+.wrap{max-width:840px;margin:0 auto;padding:48px 20px 80px}
+h1{font-size:29px;line-height:1.4;margin:0 0 10px}
+h2{font-size:20px;margin:38px 0 12px;padding-left:12px;border-left:4px solid var(--acc)}
+h3{font-size:17px;margin:24px 0 8px;color:#e2e8f0}
+p,li{color:#cbd5e1}.sub{color:var(--mut);margin:0 0 26px;font-size:15px}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:14.5px}
+th,td{border:1px solid var(--line);padding:10px 12px;text-align:left;vertical-align:top}
+th{background:#172033}
+code{background:#0b1220;border:1px solid var(--line);border-radius:6px;padding:2px 6px;font-size:13.5px;color:#7dd3fc}
+pre{background:#0b1220;border:1px solid var(--line);border-radius:10px;padding:14px;overflow:auto;font-size:13.5px;line-height:1.65}
+pre code{border:0;background:none;padding:0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 20px;margin:16px 0}
+label.fl{display:block;font-size:14px;color:var(--mut);margin:12px 0 4px}
+input[type=text],select{width:100%;background:#0b1220;border:1px solid var(--line);border-radius:8px;color:var(--tx);padding:10px 12px;font-size:15px;font-family:inherit}
+input[type=text]:focus,select:focus{outline:none;border-color:var(--acc)}
+.btn{background:var(--acc);color:#06263a;border:0;border-radius:8px;padding:10px 18px;font-size:15px;font-weight:600;cursor:pointer;margin-top:14px}
+.btn:hover{opacity:.9}
+a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
+.note{font-size:14px;color:var(--mut);border-top:1px solid var(--line);margin-top:34px;padding-top:14px}
+.warn{color:var(--warn)}
+.pagenav{border-top:1px solid var(--line);margin-top:34px;padding-top:16px}
+.pagenav>p{font-size:14px;color:var(--mut);margin:0 0 8px}
+.pagenav>ul{list-style:none;padding:0;margin:0;display:flex;flex-wrap:wrap;gap:8px 18px}
+.pagenav>ul li{font-size:14.5px}
+@media (max-width:640px){
+  .wrap{padding:28px 14px 64px}
+  h1{font-size:23px;line-height:1.35}
+  h2{font-size:18px;margin:30px 0 10px}
+  h3{font-size:16px}
+  body{font-size:15.5px}
+  table{display:block;width:100%;overflow-x:auto;white-space:nowrap}
+  th,td{padding:9px 10px;font-size:13.5px}
+  code{word-break:break-all}
+  pre{max-width:100%;overflow-x:auto}
+  pre code{word-break:normal}
+  .pagenav>ul{gap:6px 14px}
+  .pagenav>ul li{font-size:13.5px}
+}
+</style>
+</head>
+<body><div class="wrap">
+
+<h1>API 客户端配置生成器</h1>
+<p class="sub">选客户端、填地址，直接生成能用的配置　<span>｜<a href="./">返回比价与选站指南</a></span></p>
+
+<div class="card">
+  <label class="fl" for="client">1. 你用的客户端</label>
+  <select id="client">
+    <option value="cherry">Cherry Studio</option>
+    <option value="nextchat">NextChat / ChatGPT-Next-Web</option>
+    <option value="lobechat">LobeChat</option>
+    <option value="cline">Cline / Roo Code（VS Code）</option>
+    <option value="cursor">Cursor</option>
+    <option value="claudecode">Claude Code（命令行）</option>
+    <option value="env">通用：环境变量写法</option>
+    <option value="curl">通用：curl 测试命令</option>
+  </select>
+
+  <label class="fl" for="baseurl">2. 站点地址（从服务商控制台复制，形如 https://xxx.com 或 https://xxx.com/v1）</label>
+  <input type="text" id="baseurl" placeholder="https://你的站点.com" value="">
+
+  <label class="fl" for="apikey">3. API Key（sk- 开头那串）</label>
+  <input type="text" id="apikey" placeholder="sk-xxxxxxxx" value="">
+
+  <label class="fl" for="model">4. 模型名（从服务商的模型列表里复制，必须完全一致）</label>
+  <input type="text" id="model" placeholder="deepseek-flash" value="deepseek-flash">
+
+  <button class="btn" id="gen">生成配置</button>
+</div>
+
+<div class="card" id="out" style="display:none">
+  <p class="sub" style="margin:0 0 6px">生成结果</p>
+  <p id="where" style="margin:0 0 10px"></p>
+  <pre><code id="result"></code></pre>
+  <p class="sub" id="tip" style="margin:10px 0 0"></p>
+</div>
+
+<h2>最容易填错的三个地方</h2>
+
+<h3>1. base_url 到底要不要带 /v1</h3>
+<table>
+<tr><th>客户端</th><th>base_url 填法</th></tr>
+<tr><td>Cherry Studio / NextChat / LobeChat / Cline / Cursor</td><td><code>https://站点.com/v1</code>（带 /v1）</td></tr>
+<tr><td><strong>Claude Code</strong></td><td><code>https://站点.com</code>（<strong>不带 /v1</strong>）</td></tr>
+</table>
+<p><strong>为什么不一样：</strong>Claude Code 会在后面自己拼 <code>/v1/messages</code>，其余客户端会拼 <code>/v1/chat/completions</code>。</p>
+<p class="warn">填错的典型症状：404，或者报「路径不存在」。如果你填了带 <code>/v1</code> 的地址给 Claude Code，实际请求会变成 <code>/v1/v1/messages</code>。</p>
+
+<h3>2. 模型名必须和服务商列表一字不差</h3>
+<p>不同服务商对同一个模型的命名可能略有差异（大小写、后缀）。<strong>以上面填的那串为准，别照抄别处的。</strong></p>
+<p>判断方法：访问 <code>站点/v1/models</code>（带上你的 key），返回的列表里才是真实可用的名字。</p>
+
+<h3>3. key 前后可能带空格</h3>
+<p>从网页复制 key 时很容易带上换行或空格，肉眼看不出来，但请求会返回 401。</p>
+<p>粘贴后手动按一下 End 键，确认光标紧贴最后一个字符。</p>
+
+<h2>配置完先用这条命令验证</h2>
+<p>别急着在客户端里试，先用命令行确认 key 和地址本身是对的：</p>
+<pre><code>curl -s https://你的站点/v1/models -H "Authorization: Bearer sk-你的key"</code></pre>
+<p>返回一串 JSON 模型列表 = 地址和 key 都没问题，接下来只需要调客户端的配置。<br>
+返回 401 = key 不对或带了空格。<br>
+返回 404 = 站点地址填错，或者服务商的 API 暂时不可用。</p>
+
+<h2>多客户端同时用同一套 key 会怎样</h2>
+<p>可以，但不建议。出问题时分不清是谁在消耗额度。</p>
+<table>
+<tr><th>做法</th><th>好处</th><th>代价</th></tr>
+<tr><td>一个客户端一个 key</td><td>能看清单个客户端的用量，泄露时只吊销一个</td><td>要记多个 key</td></tr>
+<tr><td>全部共用一个</td><td>省事</td><td>出事无法定位，只能全换</td></tr>
+</table>
+
+<nav class="pagenav">
+  <p>相关内容</p>
+  <ul>
+    <li><a href="./">比价与选站指南</a></li>
+    <li><a href="client-setup.html">客户端配置详解</a></li>
+    <li><a href="claude-code-api.html">Claude Code / Cursor 接入</a></li>
+    <li><a href="api-error-codes.html">报错大全</a></li>
+    <li><a href="api-price-table.html">官方价格表</a></li>
+    <li><a href="cost-calculator.html">成本计算器</a></li>
+  </ul>
+</nav>
+
+<div class="note">
+<p>本页由 <a href="https://l7shop.xyz" rel="nofollow">l7shop.xyz</a> 维护。所有内容在你的浏览器内生成，输入的地址和 key 不会发送到任何服务器。</p>
+<p><a href="./">← 返回比价与选站指南</a>　·　<a href="client-setup.html">客户端配置详解</a></p>
+</div>
+
+</div>
+<script>
+(function () {
+  var CLIENT = {
+    cherry:    { name: 'Cherry Studio', kind: 'openai', where: '设置 → 模型服务 → 添加「OpenAI 兼容」服务商，把下面两项填进去：' },
+    nextchat:  { name: 'NextChat', kind: 'openai', where: '设置 → 自定义接口，打开「使用自定义接口」，然后填：' },
+    lobechat:  { name: 'LobeChat', kind: 'openai', where: '设置 → 语言模型 → OpenAI → 填入接口代理地址和 key：' },
+    cline:     { name: 'Cline / Roo Code', kind: 'openai', where: '设置 → API Provider 选「OpenAI Compatible」，然后填：' },
+    cursor:    { name: 'Cursor', kind: 'openai', where: 'Settings → Models → OpenAI API Key 区域，勾选 Override OpenAI Base URL，然后填：' },
+    claudecode:{ name: 'Claude Code', kind: 'anthropic', where: '在终端里设置环境变量（写进 ~/.zshrc 或 ~/.bashrc 可持久化）：' },
+    env:       { name: '环境变量', kind: 'openai', where: '写进 shell 配置或 .env 文件：' },
+    curl:      { name: 'curl 测试', kind: 'openai', where: '直接在终端执行，用来验证地址和 key：' }
+  };
+
+  function normBase(raw) {
+    var b = (raw || '').trim().replace(/\/+$/, '');
+    return b;
+  }
+  function withV1(b) {
+    return /\/v1$/.test(b) ? b : b + '/v1';
+  }
+  function esc(s) {
+    return String(s).replace(/"/g, '\\"');
+  }
+
+  function build(clientKey, baseRaw, key, model) {
+    var c = CLIENT[clientKey];
+    var base = normBase(baseRaw) || 'https://你的站点.com';
+    var k = key || 'sk-你的key';
+    var m = model || 'deepseek-flash';
+    var lines = [], tip = '';
+
+    if (clientKey === 'claudecode') {
+      var root = base.replace(/\/v1$/, '');
+      lines = [
+        '# Claude Code 走 Anthropic 协议，base_url 不带 /v1',
+        'export ANTHROPIC_BASE_URL="' + esc(root) + '"',
+        'export ANTHROPIC_AUTH_TOKEN="' + esc(k) + '"',
+        '',
+        '# 验证（新开一个终端）',
+        'claude'
+      ];
+      tip = '注意：这里用的是 ANTHROPIC_AUTH_TOKEN，不是 ANTHROPIC_API_KEY。两者都能用，但前者优先级更高。';
+    } else if (clientKey === 'curl') {
+      var b1 = withV1(base);
+      lines = [
+        '# 1) 先验证 key 和地址（不消耗 token）',
+        'curl -s "' + esc(b1) + '/models" \\',
+        '  -H "Authorization: Bearer ' + esc(k) + '"',
+        '',
+        '# 2) 再发一次真实请求',
+        'curl -s "' + esc(b1) + '/chat/completions" \\',
+        '  -H "Authorization: Bearer ' + esc(k) + '" \\',
+        '  -H "Content-Type: application/json" \\',
+        '  -d \'{"model":"' + esc(m) + '","messages":[{"role":"user","content":"你好"}]}\''
+      ];
+      tip = '/models 返回 JSON 列表就说明地址和 key 都对，接着再调客户端。';
+    } else if (clientKey === 'env') {
+      var b2 = withV1(base);
+      lines = [
+        'OPENAI_BASE_URL="' + esc(b2) + '"',
+        'OPENAI_API_KEY="' + esc(k) + '"',
+        'OPENAI_MODEL="' + esc(m) + '"'
+      ];
+      tip = '不同工具读的环境变量名可能不同（OPENAI_API_KEY / OPENAI_KEY / API_KEY），以工具文档为准。';
+    } else {
+      // 图形客户端
+      var b3 = withV1(base);
+      lines = [
+        'Base URL:  ' + b3,
+        'API Key:   ' + k,
+        'Model:     ' + m
+      ];
+      tip = 'Base URL 已经按你的客户端补好 /v1，直接复制。';
+      if (clientKey === 'cline' || clientKey === 'cursor') {
+        tip += ' 如果这个客户端不支持某些参数（比如 tool_calls），换一个兼容性更好的客户端试试。';
+      }
+    }
+    return { where: c.where, text: lines.join('\n'), tip: tip };
+  }
+
+  function render() {
+    var ck = document.getElementById('client').value;
+    var base = document.getElementById('baseurl').value;
+    var key = document.getElementById('apikey').value;
+    var model = document.getElementById('model').value;
+    var r = build(ck, base, key, model);
+    document.getElementById('where').textContent = r.where;
+    document.getElementById('result').textContent = r.text;
+    document.getElementById('tip').textContent = r.tip;
+    document.getElementById('out').style.display = '';
+  }
+
+  document.getElementById('gen').addEventListener('click', render);
+  ['client', 'baseurl', 'apikey', 'model'].forEach(function (id) {
+    document.getElementById(id).addEventListener('input', function () {
+      if (document.getElementById('out').style.display !== 'none') { render(); }
+    });
+    document.getElementById(id).addEventListener('change', function () {
+      if (document.getElementById('out').style.display !== 'none') { render(); }
+    });
+  });
+})();
+</script>
+</body></html>
