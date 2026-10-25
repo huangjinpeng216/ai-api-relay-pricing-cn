@@ -37,6 +37,15 @@ a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
   pre code{word-break:normal}
   img{max-width:100%;height:auto}
   ul,ol{padding-left:20px}
+}.pagenav{border-top:1px solid var(--line);margin-top:34px;padding-top:16px}
+.pagenav>p{font-size:14px;color:var(--mut);margin:0 0 8px}
+.pagenav>ul{list-style:none;padding:0;margin:0;display:flex;flex-wrap:wrap;gap:8px 18px}
+.pagenav>ul li{font-size:14.5px}
+.pagenav a{color:var(--acc);text-decoration:none}
+.pagenav a:hover{text-decoration:underline}
+@media (max-width:640px){
+  .pagenav>ul{gap:6px 14px}
+  .pagenav>ul li{font-size:13.5px}
 }</style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"API 中转站 vs 官方直连：到底差在哪｜延迟、价格、风险对比（2026）","description":"中转站和官方直连的实际差异：价格倍数、延迟构成、可用性风险、数据流向、合规边界。给出去留决策清单，帮你判断什么场景该用哪一边。","inLanguage":"zh-CN","datePublished":"2026-10-26","dateModified":"2026-10-26","author":{"@type":"Organization","name":"l7shop","url":"https://l7shop.xyz"},"mainEntityOfPage":{"@type":"WebPage","@id":"https://huangjinpeng216.github.io/ai-api-relay-pricing-cn/api-relay-vs-official.html"}}</script>
 </head>
@@ -114,6 +123,18 @@ a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
 </ol>
 <p>具体识别方法见 <a href="api-relay-pitfalls.html">中转站避雷指南</a>。</p>
 
+<nav class="pagenav">
+  <p>相关内容</p>
+  <ul>
+    <li><a href="./">比价与选站指南</a></li>
+    <li><a href="api-price-table.html">官方价格表</a></li>
+    <li><a href="cost-calculator.html">成本计算器</a></li>
+    <li><a href="model-selector.html">模型选择器</a></li>
+    <li><a href="api-relay-pitfalls.html">避雷指南</a></li>
+    <li><a href="client-setup.html">客户端配置</a></li>
+    <li><a href="api-error-codes.html">报错大全</a></li>
+  </ul>
+</nav>
 <div class="note">
 <p>本页由 <a href="https://l7shop.xyz" rel="nofollow">l7shop.xyz</a> 维护。我们本身是服务提供方，上述风险说明对包括我们在内的所有同类服务同样适用。</p>
 <p><a href="./">← 返回 AI API 中转站比价与选站指南</a></p>
