@@ -55,6 +55,11 @@ a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
 <h1>Claude Code / Cursor 接入第三方 API 怎么配</h1>
 <p class="sub">Anthropic 兼容接口 · base_url 与环境变量 · 常见报错排查　<span>｜<a href="./">返回比价总览</a></span></p>
 
+<div class="card">
+<p><strong>一个最容易出错的地方：</strong>Claude Code 的 <code>ANTHROPIC_BASE_URL</code> <strong>不带 <code>/v1</code></strong>，而其他客户端要带。填错的症状是 404 或路径不存在。</p>
+<p>用<a href="config-generator.html">客户端配置生成器</a>可以避免这个问题——它会按客户端自动加减 <code>/v1</code>。</p>
+</div>
+
 <h2>一、先搞清楚：你的工具用哪种协议</h2>
 <table>
 <tr><th>工具</th><th>使用的协议</th><th>需要什么</th></tr>
