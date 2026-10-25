@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cherry Studio / NextChat / LobeChat 怎么配置第三方 API（中转与自建网关）</title>
+<meta name="description" content="Cherry Studio、NextChat、LobeChat、Cline 配置第三方 API 的完整步骤：base_url 填什么、API Key 放哪、模型名怎么加、多模型怎么分组，以及配置后连不上怎么排查。">
+<meta name="keywords" content="Cherry Studio 配置 API,NextChat 自定义接口,LobeChat 第三方 API,Cline 配置,客户端 base_url,多模型配置">
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="https://huangjinpeng216.github.io/ai-api-relay-pricing-cn/client-setup.html">
+<style>
+:root{--bg:#0f172a;--card:#1e293b;--line:#334155;--tx:#e2e8f0;--mut:#94a3b8;--acc:#38bdf8}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.75 -apple-system,"PingFang SC","Microsoft YaHei",sans-serif}
+.wrap{max-width:840px;margin:0 auto;padding:48px 20px 80px}
+h1{font-size:29px;line-height:1.4;margin:0 0 10px}
+h2{font-size:20px;margin:36px 0 10px;padding-left:12px;border-left:4px solid var(--acc)}
+h3{font-size:17px;margin:22px 0 6px;color:#e2e8f0}
+p,li{color:#cbd5e1}.sub{color:var(--mut);margin:0 0 26px}
+code{background:#0b1220;border:1px solid var(--line);border-radius:6px;padding:2px 6px;font-size:14px;color:#7dd3fc}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:15px}
+th,td{border:1px solid var(--line);padding:10px 12px;text-align:left;vertical-align:top}th{background:#172033}
+a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 20px;margin:14px 0}
+.note{font-size:14px;color:var(--mut);border-top:1px solid var(--line);margin-top:32px;padding-top:14px}
+</style>
+</head>
+<body><div class="wrap">
+
+<h1>客户端怎么配置第三方 API</h1>
+<p class="sub">Cherry Studio · NextChat · LobeChat · Cline 通用步骤　<span>｜<a href="./">返回比价指南</a></span></p>
+
+<div class="card">
+<p><strong>所有客户端都只认三个值：</strong><code>base_url</code>、<code>api_key</code>、<code>model</code>。配不通几乎都是这三个里有一个不对。</p>
+</div>
+
+<h2>一、先拿到三个值</h2>
+<table>
+<tr><th>值</th><th>从哪来</th><th>长什么样</th></tr>
+<tr><td>base_url</td><td>站点文档或控制台</td><td><code>https://站点域名/v1</code></td></tr>
+<tr><td>api_key</td><td>控制台 → 令牌/API Keys → 新建</td><td><code>sk-</code> 开头的一串</td></tr>
+<tr><td>model</td><td>站点模型列表</td><td>如 <code>deepseek-v4.1-flash-1017</code>、<code>glm-5.3</code>、<code>kimi-k3</code></td></tr>
+</table>
+<p class="sub">注意：模型名必须一字不差，包括连字符和版本号。自己猜的名字 100% 会报 model not found。</p>
+
+<h2>二、Cherry Studio</h2>
+<ol>
+<li>设置 → 模型服务 → 添加提供商（选 OpenAI 兼容 / 自定义）</li>
+<li>API 地址填 <code>base_url</code></li>
+<li>API 密钥填 <code>sk-...</code></li>
+<li>点「获取模型列表」，或手动添加模型名</li>
+<li>回到对话界面，选刚加的模型</li>
+</ol>
+<p><strong>常见问题：</strong>获取列表失败多半是 base_url 少了 <code>/v1</code>；列表能拉到但对话报错，检查模型是否在当前分组开放。</p>
+
+<h2>三、NextChat（ChatGPT-Next-Web）</h2>
+<ol>
+<li>设置 → 自定义接口（Custom Endpoint）</li>
+<li>接口地址填 <code>base_url</code></li>
+<li>API Key 填 <code>sk-...</code></li>
+<li>模型下拉框里「自定义模型」填模型名，多个用逗号分隔</li>
+</ol>
+<p><strong>注意：</strong>NextChat 会在 base_url 后面自动拼 <code>/chat/completions</code>，所以不要自己写全路径。</p>
+
+<h2>四、LobeChat</h2>
+<ol>
+<li>设置 → 语言模型 → OpenAI（或自定义提供商）</li>
+<li>填入 base_url 与 API Key</li>
+<li>在「模型列表」里手动加入模型 ID</li>
+<li>开启「使用客户端请求」以免服务端代理造成额外超时</li>
+</ol>
+
+<h2>五、Cline / Roo Code（VS Code 插件）</h2>
+<ol>
+<li>选择 API Provider 为 <em>OpenAI Compatible</em></li>
+<li>Base URL 填 <code>base_url</code></li>
+<li>API Key 填 <code>sk-...</code></li>
+<li>Model ID 填准确模型名</li>
+</ol>
+<p>如果要接 Claude Code 这类走 Anthropic 协议的工具，需要站点提供 Anthropic 兼容接口，配置方式不同，见 <a href="claude-code-api.html">Claude Code 配置教程</a>。</p>
+
+<h2>六、多模型怎么组织</h2>
+<p>建议按用途建多套配置，而不是一套里塞所有模型：</p>
+<table>
+<tr><th>用途</th><th>模型选择思路</th></tr>
+<tr><td>写代码 / 改 bug</td><td>选响应快、代码能力强的 Flash 类</td></tr>
+<tr><td>中文写作、翻译</td><td>选中文语感好的</td></tr>
+<tr><td>长文档分析</td><td>选上下文窗口大的</td></tr>
+<tr><td>批量任务</td><td>选单价最低的，并做好失败重试</td></tr>
+</table>
+
+<h2>七、配完连不上，按这个顺序查</h2>
+<ol>
+<li>用 curl 直接打一次 <code>/v1/models</code>，确认 key 和 base_url 本身是对的</li>
+<li>curl 通了但客户端不通 → 客户端路径拼接问题（多写了路径或少了 /v1）</li>
+<li>客户端报 model not found → 模型名不对</li>
+<li>都通但很慢 → 上游拥堵，换模型或换站</li>
+<li>偶发失败 → 加自动重试，不要一次失败就判定站点不可用</li>
+</ol>
+<p>报错含义逐个查：<a href="api-error-codes.html">AI API 常见报错大全</a>。</p>
+
+<div class="note">
+<p>本页由 <a href="https://l7shop.xyz" rel="nofollow">l7shop.xyz</a> 维护。各客户端界面可能随版本变化，以官方文档为准。</p>
+<p><a href="./">← 返回 AI API 中转站比价与选站指南</a></p>
+</div>
+
+</div></body></html>
