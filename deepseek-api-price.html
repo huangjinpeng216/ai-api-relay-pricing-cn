@@ -58,13 +58,23 @@ a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
 </ul>
 <p>两者都能通过 API 调用，模型名不同，计费也不同。写代码和改 bug 这类高频任务，Flash 版的性价比明显更高。</p>
 
-<h2>四、一个月大概花多少</h2>
+<h2>四、一个月大概花多少（按官方真实单价算）</h2>
+<p class="sub">以下用官方公示价计算：输入 $0.15 / 输出 $0.60（每百万 token，缓存未命中），汇率按 1:7.2，输入输出比例按 7:3。</p>
 <table>
-<tr><th>使用强度</th><th>月 token 量（估）</th><th>官方原价感觉</th><th>0.1x 之后</th></tr>
-<tr><td>轻度（每天十几轮）</td><td>约 50 万</td><td>一顿饭钱</td><td>几块钱</td></tr>
-<tr><td>中度（每天几十轮）</td><td>约 200 万</td><td>小几百</td><td>几十块</td></tr>
-<tr><td>重度（跑 Agent / 批量任务）</td><td>千万级</td><td>上千</td><td>一百多</td></tr>
+<tr><th>月 token 量</th><th style="text-align:right">官方价（人民币）</th><th style="text-align:right">0.1x 后</th><th style="text-align:right">每月省</th></tr>
+<tr><td>50 万</td><td class="num">约 ¥1</td><td class="num">约 ¥0.1</td><td class="num">¥0.9</td></tr>
+<tr><td>200 万</td><td class="num">约 ¥4</td><td class="num">约 ¥0.4</td><td class="num">¥3.7</td></tr>
+<tr><td>1000 万</td><td class="num">约 ¥21</td><td class="num">约 ¥2</td><td class="num">¥18</td></tr>
+<tr><td>5000 万</td><td class="num">约 ¥103</td><td class="num">约 ¥10</td><td class="num">¥92</td></tr>
 </table>
+<p class="sub">换算依据见 <a href="api-price-table.html">官方价格表</a>。价格可能调整，请以官方文档为准。</p>
+
+<div class="card">
+<p><strong>一个反直觉但重要的结论：</strong>DeepSeek Flash 本身就很便宜。哪怕你一个月跑 5000 万 token（相当于每天几百次调用），官方价也才一百块出头。</p>
+<p>这意味着：<strong>如果你只用 Flash 档，中转站帮你省下的绝对金额很小</strong>（一个月几十块），不值得为此承担第三方服务的稳定性风险。</p>
+<p>0.1x 的省钱效果真正明显的地方是高单价模型——比如 Kimi K3 的输出价 ¥100/百万 token、DeepSeek Pro 的 $1.98/百万 token。同样的倍率，基数越大省得越多。</p>
+<p>所以选站之前先算清楚：<strong>你用的是便宜模型还是贵模型？</strong>用便宜模型就别折腾，用贵模型才值得比价。可以拿 <a href="cost-calculator.html">成本计算器</a> 填自己的量试一下。</p>
+</div>
 <p class="sub">以上为数量级估算，实际取决于上下文长度、是否缓存命中、模型选择。</p>
 
 <h2>五、影响成本的六个变量</h2>
