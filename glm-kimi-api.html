@@ -82,6 +82,31 @@ kimi-k3</code></pre>
 <tr><td>需要多步推理的复杂问题</td><td>DeepSeek 推理版</td></tr>
 </table>
 
+<h2>六、官方价格是多少</h2>
+<p class="sub">以下抓自官方定价页（2026-10-26），折算列为按 0.1x 倍率的换算值。</p>
+
+<h3>GLM（人民币计价，单位：元 / 百万 token）</h3>
+<table>
+<tr><th>计费项</th><th style="text-align:right">GLM-5.3 官方</th><th style="text-align:right">0.1x</th><th style="text-align:right">GLM-5.3-Flash 官方</th><th style="text-align:right">0.1x</th></tr>
+<tr class="hi"><td><b>输入</b></td><td class="num"><b>8 元</b></td><td class="num"><b>0.8 元</b></td><td class="num"><b>0.8 元</b></td><td class="num"><b>0.08 元</b></td></tr>
+<tr><td><b>输出</b></td><td class="num"><b>28 元</b></td><td class="num"><b>2.8 元</b></td><td class="num"><b>2.8 元</b></td><td class="num"><b>0.28 元</b></td></tr>
+<tr><td>缓存命中</td><td class="num">2 元</td><td class="num">0.2 元</td><td class="num">0.23 元</td><td class="num">0.023 元</td></tr>
+</table>
+<p class="sub">来源：open.bigmodel.cn/pricing。GLM-5.3-Flash 支持图片、视频、文件多模态输入，价格只有满血版的十分之一。</p>
+
+<h3>Kimi（人民币计价，单位：元 / 百万 token）</h3>
+<table>
+<tr><th>模型</th><th style="text-align:right">输入官方</th><th style="text-align:right">输入 0.1x</th><th style="text-align:right">输出官方</th><th style="text-align:right">输出 0.1x</th></tr>
+<tr><td><code>kimi-k3.1-pro</code></td><td class="num">¥13.00</td><td class="num">¥1.30</td><td class="num">¥68.00</td><td class="num">¥6.80</td></tr>
+<tr class="hi"><td><code>kimi-k3</code></td><td class="num"><b>¥20.00</b></td><td class="num"><b>¥2.00</b></td><td class="num"><b>¥100.00</b></td><td class="num"><b>¥10.00</b></td></tr>
+<tr><td><code>kimi-k2.7-code</code></td><td class="num">¥6.50</td><td class="num">¥0.65</td><td class="num">¥27.00</td><td class="num">¥2.70</td></tr>
+</table>
+<p class="sub">来源：platform.moonshot.cn/docs/pricing/chat。</p>
+
+<div class="card">
+<p><strong>注意一个反直觉的点：</strong>Kimi K3 的输出价 ¥100/百万 token，比 kimi-k3.1-pro 的 ¥68 还贵。选型时不要按「版本号越大越贵」推断，要看实际单价。</p>
+<p>另外，GLM-5.3 与 GLM-5.3-Flash 差 10 倍。日常任务用 Flash，复杂任务才切满血版——这是最容易忽略的省钱点。</p>
+</div>
 <h2>七、长上下文能装多少内容</h2>
 <p>「上下文窗口 100 万 token」听起来很能装，换算成实际内容是这样：</p>
 <table>
