@@ -85,7 +85,21 @@ a:hover{text-decoration:underline}
 .tag{display:inline-block;font-size:13px;color:#7dd3fc;border:1px solid #1e40af;background:#0b1a33;border-radius:999px;padding:2px 12px;margin-right:8px}
 .note{font-size:14px;color:var(--mut);border-top:1px solid var(--line);margin-top:36px;padding-top:16px}
 .cta{display:inline-block;background:linear-gradient(90deg,#2563eb,#22d3ee);color:#04121f;font-weight:700;padding:12px 26px;border-radius:10px;margin-top:8px}
-</style>
+/* MOBILE_FIX: 窄屏下表格可横向滚动、长代码可换行，避免撑破页面 */
+@media (max-width:640px){
+  .wrap{padding:28px 14px 64px}
+  h1{font-size:23px;line-height:1.35}
+  h2{font-size:18px;margin:30px 0 10px}
+  h3{font-size:16px}
+  body{font-size:15.5px;line-height:1.75}
+  table{display:block;width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;white-space:nowrap}
+  th,td{padding:9px 10px;font-size:13.5px}
+  code{word-break:break-all}
+  pre{max-width:100%;overflow-x:auto}
+  pre code{word-break:normal}
+  img{max-width:100%;height:auto}
+  ul,ol{padding-left:20px}
+}</style>
 </head>
 <body>
 <div class="wrap">
