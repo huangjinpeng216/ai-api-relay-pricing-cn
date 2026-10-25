@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>团队采购 AI API 要问清楚的 12 个问题｜从个人试用到公司报销的差别（2026）</title>
+<meta name="description" content="个人用 API 只看能不能调通，公司采购要问发票、并发、SLA、日志留存、数据流向、余额退出。这篇给出 12 个必问问题、该听到的答案和红旗信号，附可直接复制的提问清单。">
+<meta name="keywords" content="AI API 采购,大模型 API 企业采购,API 中转站 发票,API 服务 SLA,API 数据合规,团队 API 接入">
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="https://huangjinpeng216.github.io/ai-api-relay-pricing-cn/team-procurement.html">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"团队采购 AI API 要问清楚的 12 个问题","description":"个人用 API 只看能不能调通，公司采购要问发票、并发、SLA、日志留存、数据流向、余额退出。","inLanguage":"zh-CN","datePublished":"2026-10-26","dateModified":"2026-10-26","author":{"@type":"Organization","name":"l7shop","url":"https://l7shop.xyz"},"mainEntityOfPage":{"@type":"WebPage","@id":"https://huangjinpeng216.github.io/ai-api-relay-pricing-cn/team-procurement.html"}}</script>
+<style>
+:root{--bg:#0f172a;--card:#1e293b;--line:#334155;--tx:#e2e8f0;--mut:#94a3b8;--acc:#38bdf8;--warn:#f97316}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.75 -apple-system,"PingFang SC","Microsoft YaHei",sans-serif}
+.wrap{max-width:840px;margin:0 auto;padding:48px 20px 80px}
+h1{font-size:30px;line-height:1.35;margin:0 0 10px}
+h2{font-size:21px;margin:40px 0 12px;padding-left:12px;border-left:4px solid var(--acc)}
+h3{font-size:17px;margin:26px 0 8px;color:#e2e8f0}
+p,li{color:#cbd5e1}.sub{color:var(--mut);margin:0 0 28px}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:14.5px}
+th,td{border:1px solid var(--line);padding:10px 12px;text-align:left;vertical-align:top}
+th{background:#172033}
+code{background:#0b1220;border:1px solid var(--line);border-radius:6px;padding:2px 6px;font-size:13.5px;color:#7dd3fc}
+pre{background:#0b1220;border:1px solid var(--line);border-radius:10px;padding:14px;overflow:auto;font-size:13.5px;line-height:1.65}
+pre code{border:0;background:none;padding:0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 20px;margin:16px 0}
+a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
+ul{padding-left:22px}
+.note{font-size:14px;color:var(--mut);border-top:1px solid var(--line);margin-top:34px;padding-top:14px}
+.red{color:var(--warn)}
+.pagenav{border-top:1px solid var(--line);margin-top:34px;padding-top:16px}
+.pagenav>p{font-size:14px;color:var(--mut);margin:0 0 8px}
+.pagenav>ul{list-style:none;padding:0;margin:0;display:flex;flex-wrap:wrap;gap:8px 18px}
+.pagenav>ul li{font-size:14.5px}
+.pagenav a{color:var(--acc);text-decoration:none}
+.pagenav a:hover{text-decoration:underline}
+@media (max-width:640px){
+  .wrap{padding:28px 14px 64px}
+  h1{font-size:23px;line-height:1.35}
+  h2{font-size:18px;margin:30px 0 10px}
+  h3{font-size:16px}
+  body{font-size:15.5px;line-height:1.75}
+  table{display:block;width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;white-space:nowrap}
+  th,td{padding:9px 10px;font-size:13.5px}
+  code{word-break:break-all}
+  pre{max-width:100%;overflow-x:auto}
+  pre code{word-break:normal}
+  ul,ol{padding-left:20px}
+  .pagenav>ul{gap:6px 14px}
+  .pagenav>ul li{font-size:13.5px}
+}
+</style>
+</head>
+<body><div class="wrap">
+
+<h1>团队采购 AI API 要问清楚的 12 个问题</h1>
+<p class="sub">个人试用到公司报销，中间的差别不是价格，是这 12 件事　<span>｜<a href="./">返回比价与选站指南</a></span></p>
+
+<div class="card">
+<p><strong>一句话版本：</strong>个人只看「能不能调通、便不便宜」；公司还要看「能不能报销、出问题谁负责、数据去哪了、不用了怎么退」。</p>
+<p>这 12 个问题按顺序问，能筛掉大部分不适合团队使用的服务商。每一个都给出「该听到什么答案」和「红旗信号」。</p>
+</div>
+
+<h2>一、商务相关（4 个）</h2>
+
+<h3>1. 能开发票吗？什么类型、几个点？</h3>
+<table>
+<tr><th>该听到的</th><th>红旗信号</th></tr>
+<tr><td>明确说出发票类型（增值税普通/专用）、税率、开票周期</td><td>含糊其辞，或说「这个要问一下」然后没下文</td></tr>
+</table>
+<p><strong>为什么重要：</strong>没有发票，这笔支出在公司账上就是「个人垫付无法报销」，团队用不起来。</p>
+
+<h3>2. 付款方式有哪些？支持对公转账吗？</h3>
+<p>个人用支付宝微信就够了，团队通常需要<strong>对公转账</strong>并走采购流程。</p>
+<p class="red">红旗：只支持个人扫码充值，且不能提供收款方公司主体信息。</p>
+
+<h3>3. 单价会变吗？变之前会通知吗？</h3>
+<p>倍率型服务最常见的问题是「悄悄调倍率」。问清楚：</p>
+<ul>
+<li>当前倍率是多少，按什么周期复核</li>
+<li>调整前是否提前通知，提前多久</li>
+<li>已充值的余额是否按新倍率消耗</li>
+</ul>
+
+<h3>4. 余额怎么结清？不用了怎么处理？</h3>
+<p><strong>这是团队采购最该问但最少人问的一条。</strong></p>
+<p>预付费服务的余额本质是对服务商的债权。要问清三件事：</p>
+<ul>
+<li>余额能否结清或转出，条件是什么</li>
+<li>不能结清的话，余额有效期多久</li>
+<li>服务停止运营时，余额如何处理</li>
+</ul>
+<p class="red">红旗：「永久有效」这种承诺——没有主体支撑的永久承诺等于没有承诺。</p>
+
+<h2>二、技术相关（4 个）</h2>
+
+<h3>5. 支持哪些协议？我们要用的工具适配吗？</h3>
+<table>
+<tr><th>你的工具</th><th>需要的协议</th></tr>
+<tr><td>Claude Code / Codex CLI</td><td>Anthropic Messages（<code>/v1/messages</code>）</td></tr>
+<tr><td>Cursor / Cline / NextChat</td><td>OpenAI（<code>/v1/chat/completions</code>）</td></tr>
+<tr><td>Gemini 生态工具</td><td>Gemini（<code>/v1beta/models</code>）</td></tr>
+</table>
+<p>只支持一种协议的服务商，会在你换工具时变成障碍。</p>
+
+<h3>6. 并发上限是多少？超了会怎样？</h3>
+<p>要问具体数字，不要接受「足够用」这种回答。</p>
+<ul>
+<li>每分钟请求数（RPM）和每分钟 token 数（TPM）上限</li>
+<li>超限是排队、报 429、还是静默降速</li>
+<li>能不能申请提额，条件是什么</li>
+</ul>
+
+<h3>7. 出故障时怎么通知？有没有状态页？</h3>
+<p>团队场景下，「坏了没人说」比「坏了」更麻烦——用户会以为是自己的问题。</p>
+<table>
+<tr><th>该听到的</th><th>红旗信号</th></tr>
+<tr><td>有状态页 / 公告渠道，故障时主动通知，恢复后说明原因</td><td>只能靠用户自己发现调不通</td></tr>
+</table>
+<p>顺便说一个判断技巧：<strong>未鉴权访问 <code>/v1/models</code> 应该返回 401</strong>。返回 404 说明路由丢失，返回 000 说明服务不可达。这一条 10 秒能测出来。</p>
+
+<h3>8. 调用日志能查多久？能导出吗？</h3>
+<p>团队要做成本分摊和问题追溯，日志是唯一依据。</p>
+<ul>
+<li>能查到每次调用的 token 数、时间、模型名吗</li>
+<li>日志保留多久</li>
+<li>能不能按 key / 成员 / 项目分开统计</li>
+<li>能不能导出 CSV</li>
+</ul>
+
+<h2>三、合规与数据（2 个）</h2>
+
+<h3>9. 我的 prompt 和返回内容会被留存吗？留多久？</h3>
+<p><strong>这个问题必须得到明确答复，不接受「我们不会看」。</strong></p>
+<p>要问的是技术事实，不是承诺：</p>
+<ul>
+<li>请求内容是否落盘</li>
+<li>落盘的话保留多久、谁能访问</li>
+<li>是否用于任何形式的训练或分析</li>
+</ul>
+
+<h3>10. 上游是谁？是自己的账号池还是转售？</h3>
+<p>这决定了两件事：数据经过几手，以及服务中断的概率。</p>
+<table>
+<tr><th>类型</th><th>特征</th><th>风险</th></tr>
+<tr><td>自有官方账号</td><td>能说明上游渠道和使用条款</td><td>较低，但受官方政策影响</td></tr>
+<tr><td>多层转售</td><td>说不清上游是谁</td><td>任一环节出问题就断，数据路径不可知</td></tr>
+</table>
+
+<h2>四、退出与依赖（2 个）</h2>
+
+<h3>11. 如果我们要换服务商，迁移成本有多大？</h3>
+<p>好消息是 API 类服务迁移成本通常很低——<strong>只要对方用标准协议</strong>。所以这条的实质是问：</p>
+<ul>
+<li>是否用标准 OpenAI / Anthropic 协议（是的话改个 base_url 就能迁）</li>
+<li>有没有私有扩展字段，用了就锁死</li>
+<li>模型名是否与官方一致（不一致的话迁移要改代码）</li>
+</ul>
+
+<h3>12. 你们公司主体是什么？能提供营业执照吗？</h3>
+<p>团队采购走合同流程时必须有明确的法律主体。</p>
+<p class="red">红旗：只有个人账号收款、无法提供主体信息。这种情况下合同签不了，报销也走不通。</p>
+
+<h2>可以直接复制的提问清单</h2>
+<pre><code>你好，我们在评估团队接入，想确认几件事：
+
+商务
+1. 能否开具增值税发票？类型和税率？
+2. 支持对公转账吗？收款主体名称是什么？
+3. 当前倍率多少？调整前会提前通知吗？
+4. 余额能否结清或转出？不能的话有效期多久？
+
+技术
+5. 支持 OpenAI / Anthropic / Gemini 哪几种协议？
+6. RPM 和 TPM 上限分别是多少？超限的表现是什么？
+7. 有状态页或故障通知渠道吗？
+8. 调用日志能查多久？可以按 key 分开统计并导出吗？
+
+合规
+9. 请求和响应内容是否留存？留存多久？是否用于训练？
+10. 上游渠道是自有账号还是转售？
+
+退出
+11. 模型名是否与官方一致？迁移时是否只需改 base_url？
+12. 能否提供营业执照等主体信息用于签约？</code></pre>
+
+<h2>一张对照表：个人 vs 团队</h2>
+<table>
+<tr><th>关注点</th><th>个人自用</th><th>团队/公司</th></tr>
+<tr><td>价格</td><td>越低越好</td><td>可预测比低更重要</td></tr>
+<tr><td>凭证</td><td>不需要</td><td><strong>必须有发票</strong></td></tr>
+<tr><td>故障</td><td>自己能等</td><td>要能对外解释</td></tr>
+<tr><td>数据</td><td>不太在意</td><td><strong>必须问清流向</strong></td></tr>
+<tr><td>退出</td><td>换一家就行</td><td>要能迁移、能结算</td></tr>
+</table>
+
+<div class="card">
+<p><strong>最后一句：</strong>这 12 个问题问下来，你大概能判断出对方是个什么规模的团队。</p>
+<p>能立刻答出 8 个以上的，通常有一套完整的运营流程；答不上来的，不是不能合作，但你要清楚自己在承担什么。</p>
+<p class="sub">本文不针对任何特定服务商，也不构成采购建议。合规相关事项请咨询你们的法务或财务。</p>
+</div>
+
+<nav class="pagenav">
+  <p>相关内容</p>
+  <ul>
+    <li><a href="./">比价与选站指南</a></li>
+    <li><a href="api-price-table.html">官方价格表</a></li>
+    <li><a href="api-relay-pitfalls.html">避雷指南</a></li>
+    <li><a href="api-relay-vs-official.html">中转站 vs 官方直连</a></li>
+    <li><a href="client-setup.html">客户端配置</a></li>
+    <li><a href="price-verify.html">价格怎么自己核对</a></li>
+  </ul>
+</nav>
+
+<div class="note">
+<p>本页由 <a href="https://l7shop.xyz" rel="nofollow">l7shop.xyz</a> 维护。内容为通用采购检查清单，不对任何服务商作出评价或担保。</p>
+<p><a href="./">← 返回 AI API 中转站比价与选站指南</a>　·　<a href="api-relay-pitfalls.html">避雷指南</a></p>
+</div>
+
+</div></body></html>
