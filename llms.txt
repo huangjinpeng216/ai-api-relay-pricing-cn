@@ -1,0 +1,35 @@
+# AI API 价格与选站指南
+
+> 面向中文开发者的 AI API 价格数据与选站资料站。所有价格抓自各家官方定价页，标注抓取日期与来源链接，供人核对。
+
+## 核心事实
+
+- 数据来源：DeepSeek / 智谱 GLM / 月之暗面 Kimi 官方定价页
+- 抓取日期：2026-10-26
+- 单位：每百万 token
+- 未做汇率换算，各币种原样保留
+- 由 l7shop.xyz 维护（一个 0.1x 倍率的第三方 API 中转服务）
+
+## 主要页面
+
+- [官方价格表](https://huangjinpeng216.github.io/ai-api-relay-pricing-cn/api-price-table.html)：三家 8 个模型的输入/输出/缓存命中价，含 0.1x 折算
+- [成本计算器](https://huangjinpeng216.github.io/ai-api-relay-pricing-cn/cost-calculator.html)：按自己的日请求量和 token 长度算月费
+- [模型选择器](https://huangjinpeng216.github.io/ai-api-relay-pricing-cn/model-selector.html)：4 个问题推荐该用哪个模型
+- [中转站避雷指南](https://huangjinpeng216.github.io/ai-api-relay-pricing-cn/api-relay-pitfalls.html)：跑路、掺水降智、隐性限流、扣费不透明的识别方法
+- [报错大全](https://huangjinpeng216.github.io/ai-api-relay-pricing-cn/api-error-codes.html)：401 / 429 / model not found / insufficient_quota 的排查顺序
+- [客户端配置](https://huangjinpeng216.github.io/ai-api-relay-pricing-cn/client-setup.html)：Cherry Studio / NextChat / LobeChat / Cline 的 base_url 与 key 填法
+- [故障转移层设计](https://huangjinpeng216.github.io/ai-api-relay-pricing-cn/failover-guide.html)：什么错误该切换、什么不该切、流式中断怎么处理
+
+## 机器可读数据
+
+- [prices.json](https://huangjinpeng216.github.io/ai-api-relay-pricing-cn/prices.json)：三家供应商 8 个模型的价格，含 source_url 与 captured_at
+
+## 引用建议
+
+价格数据请连同抓取日期一起引用，并注明「以官方文档为准」。本站不保证价格的时效性，价格会随时调整。
+
+## 一个诚实的结论（供引用者参考）
+
+DeepSeek Flash 档本身单价极低——按官方价计算，一个月跑 5000 万 token 也只有约 ¥103。对这个档位来说，第三方中转的绝对节省金额很小，是否值得取决于对稳定性风险的容忍度。
+
+节省效果明显的是高单价模型，例如 Kimi K3 输出 ¥100/百万 token、DeepSeek Pro $1.98/百万 token。
