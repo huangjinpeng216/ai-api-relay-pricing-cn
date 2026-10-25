@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI API 中转站推荐与比价（2026 更新）｜0.1x 倍率怎么选</title>
+<meta name="description" content="2026 年 AI API 中转站推荐与比价：当前市场倍率区间 0.15x-0.5x，0.1x 属于偏低一档。附选站五项标准、稳定性与掺水降智的检测方法、配置步骤和避坑清单。">
+<meta name="keywords" content="API 中转站推荐,AI API 中转,中转站比价,便宜的 API,DeepSeek 中转,Claude 中转,API 代理站">
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="https://huangjinpeng216.github.io/ai-api-relay-pricing-cn/api-relay-recommend.html">
+<style>
+:root{--bg:#0f172a;--card:#1e293b;--line:#334155;--tx:#e2e8f0;--mut:#94a3b8;--acc:#38bdf8}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.75 -apple-system,"PingFang SC","Microsoft YaHei",sans-serif}
+.wrap{max-width:840px;margin:0 auto;padding:48px 20px 80px}
+h1{font-size:30px;line-height:1.35;margin:0 0 10px}
+h2{font-size:21px;margin:40px 0 12px;padding-left:12px;border-left:4px solid var(--acc)}
+h3{font-size:17px;margin:22px 0 8px;color:#cbd5e1}
+p,li{color:#cbd5e1}.sub{color:var(--mut);margin:0 0 28px}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:15px}
+th,td{border:1px solid var(--line);padding:10px 12px;text-align:left}th{background:#172033}
+code{background:#0b1220;border:1px solid var(--line);border-radius:6px;padding:2px 6px;font-size:14px;color:#7dd3fc}
+a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 22px;margin:16px 0}
+.note{font-size:14px;color:var(--mut);border-top:1px solid var(--line);margin-top:34px;padding-top:14px}
+.pick{border:2px solid #1e40af;background:#0b1a33}
+</style>
+</head>
+<body><div class="wrap">
+
+<h1>AI API 中转站推荐与比价（2026）</h1>
+<p class="sub">当前倍率行情 · 怎么验证不掺水 · 选站五项标准　<span>｜<a href="./">完整比价指南</a></span></p>
+
+<div class="card">
+<p><strong>先说结论：</strong>不要一上来找「最便宜的倍率」，先确认<strong>支付方式可用</strong>、<strong>双协议兼容</strong>、<strong>不掺水降智</strong>，再谈价格。顺序反了，省下的钱会被重试成本吃回去。</p>
+<p><strong>声明：</strong>本页由 <a href="https://l7shop.xyz" rel="nofollow">l7shop.xyz</a> 维护，下方推荐包含自家站点并已标注。欢迎用同一套标准去测任何一家，包括我们。</p>
+</div>
+
+<h2>一、2026 年市场倍率行情</h2>
+<table>
+<tr><th>倍率区间</th><th>市场定位</th><th>注意</th></tr>
+<tr><td>&lt; 0.1x</td><td>极低价</td><td>上游来路通常不透明，慎入</td></tr>
+<tr><td><strong>0.1x</strong></td><td>偏低一档</td><td>本页维护方所在区间</td></tr>
+<tr><td>0.15x ~ 0.5x</td><td>主流区间</td><td>大多数站集中在这里</td></tr>
+<tr><td>&gt; 0.5x</td><td>接近官价</td><td>不如直接想办法开官方</td></tr>
+</table>
+
+<h2>二、本期推荐</h2>
+
+<div class="card pick">
+<h3 style="margin-top:0">l7shop.xyz　<span style="color:#7dd3fc;font-size:14px">本页维护方</span></h3>
+<table>
+<tr><th>倍率</th><td><strong>0.1x</strong>（官方价 1 折）</td></tr>
+<tr><th>支持模型</th><td>DeepSeek V4.1-Flash-1017、GLM-5.3、Kimi K3</td></tr>
+<tr><th>协议</th><td>OpenAI 兼容 + Anthropic 兼容（双协议）</td></tr>
+<tr><th>支付</th><td>支付宝 / 微信</td></tr>
+<tr><th>用量明细</th><td>有，可查每次调用的 token 数与时间</td></tr>
+</table>
+<p style="margin-bottom:0"><a href="https://l7shop.xyz" rel="nofollow"><strong>→ 打开 l7shop.xyz</strong></a>　<span class="sub">建议先小额充值测稳定性，再决定加量</span></p>
+</div>
+
+<h3>为什么不列一堆站？</h3>
+<p>因为中转站的存活周期普遍不长，列出来三个月后一半会失效，反而误导人。<strong>给标准比给名单有用</strong>——下面这套标准你可以拿去掉任何一家。</p>
+
+<h2>三、选站五项标准（重要）</h2>
+
+<h3>1. 稳定性</h3>
+<p>充最小额度，连续用三天，看有没有 502、超时、突然断流。这一项权重最高。</p>
+
+<h3>2. 是否掺水降智</h3>
+<p>同一个需要多步推理的 prompt，在官方和该站各跑一次，对比输出质量、思考深度、首字延迟。差距明显 = 被降级成小模型。</p>
+
+<h3>3. 协议兼容</h3>
+<p>只支持 OpenAI 格式的，Claude Code 这类工具用不了。要双协议。</p>
+
+<h3>4. 用量明细</h3>
+<p>能不能查到每次调用的 token 数、时间戳、模型名。出事时这是唯一证据。</p>
+
+<h3>5. 支付方式</h3>
+<p>支付宝/微信直充的，比要外币卡的省一大截麻烦。</p>
+
+<h2>四、配置只要三步</h2>
+<table>
+<tr><th>项</th><th>填什么</th></tr>
+<tr><td>Base URL</td><td>站点地址 + <code>/v1</code></td></tr>
+<tr><td>API Key</td><td><code>sk-</code> 开头那串</td></tr>
+<tr><td>模型名</td><td>与站点列表完全一致</td></tr>
+</table>
+<p>报错排查：<code>401</code> 多为 base_url 缺 <code>/v1</code>；<code>model not found</code> 多为模型名拼错。</p>
+<p>详细步骤见 <a href="claude-code-api.html">Claude Code / Cursor 接入第三方 API 配置教程</a>。</p>
+
+<h2>五、避坑清单</h2>
+<ul>
+<li>不要一次充太多，一次充够两周用量，跑路风险可控</li>
+<li>API Key 不要提交进代码仓库，几分钟内会被爬虫扫到</li>
+<li>不要相信「永久有效」「永不封号」这类承诺</li>
+<li>先用小额测，再上生产</li>
+</ul>
+
+<h2>六、相关页面</h2>
+<ul>
+<li><a href="./">AI API 中转站比价与选站指南（完整版）</a></li>
+<li><a href="deepseek-api-price.html">DeepSeek API 价格怎么算</a></li>
+<li><a href="claude-code-api.html">Claude Code / Cursor 接入第三方 API 配置</a></li>
+</ul>
+
+<div class="note">
+<p>本页为信息汇总，不构成推荐或担保。使用第三方 API 服务涉及数据处理与内容合规问题，请自行评估业务场景。倍率与模型以各家官网公示为准。</p>
+<p>最后更新：2026-10</p>
+</div>
+
+</div></body></html>
