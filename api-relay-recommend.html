@@ -37,6 +37,15 @@ a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
   pre code{word-break:normal}
   img{max-width:100%;height:auto}
   ul,ol{padding-left:20px}
+}.pagenav{border-top:1px solid var(--line);margin-top:34px;padding-top:16px}
+.pagenav>p{font-size:14px;color:var(--mut);margin:0 0 8px}
+.pagenav>ul{list-style:none;padding:0;margin:0;display:flex;flex-wrap:wrap;gap:8px 18px}
+.pagenav>ul li{font-size:14.5px}
+.pagenav a{color:var(--acc);text-decoration:none}
+.pagenav a:hover{text-decoration:underline}
+@media (max-width:640px){
+  .pagenav>ul{gap:6px 14px}
+  .pagenav>ul li{font-size:13.5px}
 }</style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"AI API 中转站推荐与比价（2026 更新）｜0.1x 倍率怎么选","description":"2026 年 AI API 中转站推荐与比价：当前市场倍率区间 0.15x-0.5x，0.1x 属于偏低一档。附选站五项标准、稳定性与掺水降智的检测方法、配置步骤和避坑清单。","inLanguage":"zh-CN","datePublished":"2026-10-26","dateModified":"2026-10-26","author":{"@type":"Organization","name":"l7shop","url":"https://l7shop.xyz"},"mainEntityOfPage":{"@type":"WebPage","@id":"https://huangjinpeng216.github.io/ai-api-relay-pricing-cn/api-relay-recommend.html"}}</script>
 </head>
@@ -164,6 +173,18 @@ a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
 <li><a href="claude-code-api.html">Claude Code / Cursor 接入第三方 API 配置</a></li>
 </ul>
 
+<nav class="pagenav">
+  <p>相关内容</p>
+  <ul>
+    <li><a href="./">比价与选站指南</a></li>
+    <li><a href="api-price-table.html">官方价格表</a></li>
+    <li><a href="cost-calculator.html">成本计算器</a></li>
+    <li><a href="model-selector.html">模型选择器</a></li>
+    <li><a href="api-relay-pitfalls.html">避雷指南</a></li>
+    <li><a href="client-setup.html">客户端配置</a></li>
+    <li><a href="api-error-codes.html">报错大全</a></li>
+  </ul>
+</nav>
 <div class="note">
 <p>本页为信息汇总，不构成推荐或担保。使用第三方 API 服务涉及数据处理与内容合规问题，请自行评估业务场景。倍率与模型以各家官网公示为准。</p>
 <p>最后更新：2026-10</p>
