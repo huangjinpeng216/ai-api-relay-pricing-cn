@@ -38,6 +38,15 @@ a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
   pre code{word-break:normal}
   img{max-width:100%;height:auto}
   ul,ol{padding-left:20px}
+}.pagenav{border-top:1px solid var(--line);margin-top:34px;padding-top:16px}
+.pagenav>p{font-size:14px;color:var(--mut);margin:0 0 8px}
+.pagenav>ul{list-style:none;padding:0;margin:0;display:flex;flex-wrap:wrap;gap:8px 18px}
+.pagenav>ul li{font-size:14.5px}
+.pagenav a{color:var(--acc);text-decoration:none}
+.pagenav a:hover{text-decoration:underline}
+@media (max-width:640px){
+  .pagenav>ul{gap:6px 14px}
+  .pagenav>ul li{font-size:13.5px}
 }</style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"HowTo","description":"Claude Code、Cursor、Cline 想用第三方 API 中转怎么办？Anthropic 兼容接口的 base_url、api key、模型名怎么填，环境变量和配置文件两种方式，以及 401 / model not found 等常见报错排查。","inLanguage":"zh-CN","datePublished":"2026-10-26","dateModified":"2026-10-26","author":{"@type":"Organization","name":"l7shop","url":"https://l7shop.xyz"},"mainEntityOfPage":{"@type":"WebPage","@id":"https://huangjinpeng216.github.io/ai-api-relay-pricing-cn/claude-code-api.html"},"name":"Claude Code / Cursor 接入第三方 API 配置教程｜Anthropic 兼容接口怎么填（2026）"}</script>
 </head>
@@ -108,6 +117,18 @@ claude</code></pre>
 <p>最快的验证方式：发一句最简单的提问，看是否有正常回复。有回复说明链路通了；报错就按上面的对照表查。</p>
 <p>更严谨的做法是跑一段需要多步推理的 prompt，确认输出质量和官方一致——这能顺便验证是不是被<strong>掺水降智</strong>。</p>
 
+<nav class="pagenav">
+  <p>相关内容</p>
+  <ul>
+    <li><a href="./">比价与选站指南</a></li>
+    <li><a href="api-price-table.html">官方价格表</a></li>
+    <li><a href="cost-calculator.html">成本计算器</a></li>
+    <li><a href="model-selector.html">模型选择器</a></li>
+    <li><a href="api-relay-pitfalls.html">避雷指南</a></li>
+    <li><a href="client-setup.html">客户端配置</a></li>
+    <li><a href="api-error-codes.html">报错大全</a></li>
+  </ul>
+</nav>
 <div class="note">
 <p>本页由 <a href="https://l7shop.xyz" rel="nofollow">l7shop.xyz</a> 维护，内容为信息汇总，不构成推荐或担保。配置细节请以各工具官方文档为准。</p>
 <p><a href="./">← 返回 AI API 中转站比价与选站指南</a>　｜　<a href="./deepseek-api-price.html">DeepSeek API 价格怎么算 →</a></p>
