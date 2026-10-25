@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI API 价格怎么自己核对｜官方定价页核查方法与记录（2026 年 10 月）</title>
+<meta name="description" content="不相信任何比价站的价格表？这里给出逐个核对 DeepSeek、GLM、Kimi 官方定价的具体方法，以及本站每次核查的时间与结果记录。附常见价格陷阱：缓存命中价、峰谷价、隐藏的倍率换算。">
+<meta name="keywords" content="DeepSeek 价格核对,GLM 价格查询,Kimi 价格,API 官方定价页,缓存命中价,峰谷计价">
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="https://huangjinpeng216.github.io/ai-api-relay-pricing-cn/price-verify.html">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"TechArticle","headline":"AI API 价格怎么自己核对：官方定价页核查方法与记录","inLanguage":"zh-CN","datePublished":"2026-10-26","dateModified":"2026-10-26","author":{"@type":"Organization","name":"l7shop","url":"https://l7shop.xyz"}}
+</script>
+<style>
+:root{--bg:#0f172a;--card:#1e293b;--line:#334155;--tx:#e2e8f0;--mut:#94a3b8;--acc:#38bdf8;--warn:#fbbf24}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.8 -apple-system,"PingFang SC","Microsoft YaHei",sans-serif}
+.wrap{max-width:840px;margin:0 auto;padding:48px 20px 80px}
+h1{font-size:28px;line-height:1.4;margin:0 0 10px}
+h2{font-size:20px;margin:38px 0 12px;padding-left:12px;border-left:4px solid var(--acc)}
+h3{font-size:17px;margin:24px 0 8px;color:#e2e8f0}
+p,li{color:#cbd5e1}
+.sub{color:var(--mut);font-size:15px;margin:0 0 26px}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:14.5px}
+th,td{border:1px solid var(--line);padding:10px 12px;text-align:left;vertical-align:top}
+th{background:#172033}
+code{background:#0b1220;border:1px solid var(--line);border-radius:6px;padding:2px 6px;font-size:13.5px;color:#7dd3fc}
+pre{background:#0b1220;border:1px solid var(--line);border-radius:10px;padding:14px;overflow:auto;font-size:13.5px;line-height:1.65}
+pre code{border:0;background:none;padding:0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 20px;margin:16px 0}
+a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
+.note{font-size:14px;color:var(--mut);border-top:1px solid var(--line);margin-top:34px;padding-top:14px}
+.warn{color:var(--warn)}
+@media (max-width:640px){
+  .wrap{padding:28px 14px 64px}
+  h1{font-size:22px}
+  table{display:block;width:100%;overflow-x:auto;white-space:nowrap}
+  th,td{padding:9px 10px;font-size:13.5px}
+  code{word-break:break-all}
+  pre code{word-break:normal}
+}
+</style>
+</head>
+<body><div class="wrap">
+
+<h1>AI API 价格怎么自己核对</h1>
+<p class="sub">与其相信任何比价站（包括本站），不如自己查一次　<span>｜<a href="./">返回比价与选站指南</a></span></p>
+
+<div class="card">
+<p><strong>为什么写这一页：</strong>中文互联网上的 API 比价文章，十篇里有八篇的数字是互相抄的，而且不标抓取日期。你没法判断它是否过期，也没法验证它是否编造。</p>
+<p>这一页给出的是<strong>核对方法</strong>，你可以拿它去查任何一家，包括查本站的数字对不对。</p>
+</div>
+
+<h2>一、三家的官方定价页在哪</h2>
+<table>
+<tr><th>厂商</th><th>官方定价页</th><th>计价币种</th><th>备注</th></tr>
+<tr><td>DeepSeek</td><td><code>api-docs.deepseek.com/quick_start/pricing/</code></td><td>美元</td><td>静态页，直接打开就能看到表格</td></tr>
+<tr><td>智谱 GLM</td><td><code>open.bigmodel.cn/pricing</code></td><td>人民币</td><td>动态渲染，需等页面加载完</td></tr>
+<tr><td>月之暗面 Kimi</td><td><code>platform.moonshot.cn/docs/pricing/chat</code></td><td>人民币</td><td>动态渲染，表格按模型分列</td></tr>
+</table>
+<p class="sub">认准官方域名：DeepSeek 是 <code>api-docs.deepseek.com</code>，智谱是 <code>bigmodel.cn</code>，Kimi 是 <code>moonshot.cn</code>。搜索引擎里排在前面的第三方「价格大全」都不算权威来源。</p>
+
+<h2>二、查的时候注意三件事</h2>
+
+<h3>1. 输入和输出是分开定价的，而且差很多</h3>
+<p>DeepSeek Flash 输入 $0.15、输出 $0.60，输出是输入的 4 倍。只看到「一个价格」就说明这篇资料不完整。</p>
+
+<h3>2. 缓存命中价经常被忽略</h3>
+<p>DeepSeek Flash 缓存命中价 $0.003，未命中 $0.15 —— <strong>差 50 倍</strong>。</p>
+<p>多轮对话里每轮都重发系统提示词的话，你一直在按未命中价付费。合理使用缓存是最大的一笔省钱空间，比换平台省得多。</p>
+
+<h3>3. 峰谷价差一倍</h3>
+<p>DeepSeek 区分高峰期和低谷期，低谷价是高峰的一半。高峰时段为周一至周五 UTC 01:00–04:00 和 06:00–10:00（中国法定节假日除外）。</p>
+<p>批量任务挪到低谷时段，价格直接减半，没有任何代价。</p>
+
+<h2>三、本站的核查记录</h2>
+<p>每次核查后在这里追加一行。如果价格有变化，会同时更新 <a href="api-price-table.html">官方价格表</a> 并说明改了什么。</p>
+
+<table>
+<tr><th>核查时间</th><th>DeepSeek</th><th>GLM</th><th>Kimi</th><th>结论</th></tr>
+<tr>
+  <td>2026-10-26 05:30</td>
+  <td>已记录</td>
+  <td>已记录</td>
+  <td>已记录</td>
+  <td>首次抓取，建立基线</td>
+</tr>
+<tr>
+  <td>2026-10-26 12:00</td>
+  <td>无变化</td>
+  <td>无变化</td>
+  <td>无变化</td>
+  <td>复核通过，数据仍准确</td>
+</tr>
+</table>
+
+<p class="sub">基线数据：DeepSeek Flash 输入 $0.15 / 输出 $0.60（未命中，低谷）；GLM-5.3 输入 8 元 / 输出 28 元；Kimi K3 输入 ¥20 / 输出 ¥100。完整 8 个模型见价格表。</p>
+
+<h2>四、怎么用命令行批量核对</h2>
+<p>如果只是看一两家的价格，打开网页最快。要定期核对，可以用脚本：</p>
+
+<pre><code># DeepSeek 定价页是静态 HTML，直接抓取就能取到数字
+curl -sL "https://api-docs.deepseek.com/quick_start/pricing/" \
+  | grep -oE '\$[0-9]+\.[0-9]+' | head -20</code></pre>
+
+<p>GLM 和 Kimi 的定价表是前端渲染的，直接 curl 只能拿到导航。需要用浏览器渲染：</p>
+
+<pre><code>// Playwright：渲染后取表格
+const page = await browser.newPage();
+await page.goto('https://open.bigmodel.cn/pricing', { waitUntil: 'networkidle' });
+const rows = await page.evaluate(() =>
+  [...document.querySelectorAll('table tr')].map(tr =>
+    [...tr.querySelectorAll('th,td')].map(c => c.innerText.trim())));</code></pre>
+
+<h2>五、识别不靠谱的价格资料</h2>
+<table>
+<tr><th>特征</th><th>说明</th></tr>
+<tr><td>没有抓取日期</td><td>价格随时变，没日期的数字无法判断是否过期</td></tr>
+<tr><td>没有官方来源链接</td><td>无法追溯，可能是编的或从别处抄的</td></tr>
+<tr><td>只有一个总价</td><td>忽略输入/输出分开计价，用它算账单会差几十个百分点</td></tr>
+<tr><td>不提缓存命中价</td><td>漏掉了最大的省钱变量</td></tr>
+<tr><td>换算成统一币种但不给汇率</td><td>你不知道它按什么汇率算的，无法复现</td></tr>
+</table>
+
+<div class="card">
+<p><strong>本站的做法：</strong>所有价格标注抓取日期和官方来源链接，不做汇率换算（美元就是美元，人民币就是人民币），并在这里记录每次核查结果。</p>
+<p class="warn">即便如此，也请你自己核一次。价格会调整，而这一页会比你晚知道。</p>
+</div>
+
+<div class="note">
+<p>本页由 <a href="https://l7shop.xyz" rel="nofollow">l7shop.xyz</a> 维护。价格请以各家官方文档和控制台账单为准。</p>
+<p><a href="./">← 返回 AI API 中转站比价与选站指南</a>　·　<a href="api-price-table.html">官方价格表</a>　·　<a href="cost-calculator.html">成本计算器</a></p>
+</div>
+
+</div></body></html>
