@@ -63,6 +63,15 @@ a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
   pre code{word-break:normal}
   img{max-width:100%;height:auto}
   ul,ol{padding-left:20px}
+}.pagenav{border-top:1px solid var(--line);margin-top:34px;padding-top:16px}
+.pagenav>p{font-size:14px;color:var(--mut);margin:0 0 8px}
+.pagenav>ul{list-style:none;padding:0;margin:0;display:flex;flex-wrap:wrap;gap:8px 18px}
+.pagenav>ul li{font-size:14.5px}
+.pagenav a{color:var(--acc);text-decoration:none}
+.pagenav a:hover{text-decoration:underline}
+@media (max-width:640px){
+  .pagenav>ul{gap:6px 14px}
+  .pagenav>ul li{font-size:13.5px}
 }</style>
 </head>
 <body><div class="wrap">
@@ -173,6 +182,17 @@ a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
 <h3>Q：同一个任务，不同模型的输出差异大吗？</h3>
 <p>中文写作类任务差异明显（语感、用词习惯不同）；纯代码任务差异较小，更多体现在边界情况的处理和解释质量上。</p>
 
+<nav class="pagenav">
+  <p>相关内容</p>
+  <ul>
+    <li><a href="./">比价与选站指南</a></li>
+    <li><a href="api-price-table.html">官方价格表</a></li>
+    <li><a href="cost-calculator.html">成本计算器</a></li>
+    <li><a href="api-relay-pitfalls.html">避雷指南</a></li>
+    <li><a href="client-setup.html">客户端配置</a></li>
+    <li><a href="api-error-codes.html">报错大全</a></li>
+  </ul>
+</nav>
 <div class="note">
 <p>本页由 <a href="https://l7shop.xyz" rel="nofollow">l7shop.xyz</a> 维护。推荐逻辑是通用经验，不构成对任何模型的性能承诺；同系列不同版本能力有差异，请以官方文档为准。</p>
 <p><a href="./">← 返回比价与选站指南</a>　·　<a href="cost-calculator.html">成本计算器</a>　·　<a href="glm-kimi-api.html">GLM / Kimi 怎么接</a></p>
