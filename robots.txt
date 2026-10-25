@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://huangjinpeng216.github.io/ai-api-relay-pricing-cn/sitemap.xml
