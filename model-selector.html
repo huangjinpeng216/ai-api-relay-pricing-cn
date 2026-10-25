@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI 模型选择器｜写代码、写文案、长文档该用哪个模型（2026）</title>
+<meta name="description" content="回答 4 个问题，告诉你该用哪个大模型：写代码选哪个、中文写作选哪个、长文档分析选哪个、复杂推理选哪个。附选择理由和注意事项，不推荐具体平台。">
+<meta name="keywords" content="AI 模型选择,DeepSeek 还是 GLM,长文档用什么模型,写代码用哪个 AI,大模型选型">
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="https://huangjinpeng216.github.io/ai-api-relay-pricing-cn/model-selector.html">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "AI 模型选择器",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Any",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "CNY" },
+  "description": "根据任务类型、预算、上下文需求和客户端，推荐合适的大语言模型。"
+}
+</script>
+<style>
+:root{--bg:#0f172a;--card:#1e293b;--line:#334155;--tx:#e2e8f0;--mut:#94a3b8;--acc:#38bdf8}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.7 -apple-system,"PingFang SC","Microsoft YaHei",sans-serif}
+.wrap{max-width:800px;margin:0 auto;padding:48px 20px 80px}
+h1{font-size:30px;line-height:1.35;margin:0 0 8px}
+h2{font-size:19px;margin:34px 0 10px;padding-left:12px;border-left:4px solid var(--acc)}
+p,li{color:#cbd5e1}
+.sub{color:var(--mut);margin:0 0 28px;font-size:15px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px 22px;margin:18px 0}
+.q{margin:0 0 22px}
+.q:last-child{margin-bottom:0}
+.qtitle{font-size:15px;color:#e2e8f0;margin:0 0 8px;font-weight:600}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+@media(max-width:560px){.opts{grid-template-columns:1fr}}
+label.opt{display:flex;align-items:flex-start;gap:8px;background:#0b1220;border:1px solid var(--line);
+border-radius:8px;padding:10px 12px;cursor:pointer;font-size:14px;color:#cbd5e1;transition:border-color .15s}
+label.opt:hover{border-color:#475569}
+label.opt input{margin:3px 0 0;accent-color:var(--acc)}
+label.opt.on{border-color:var(--acc);background:#0b1a33}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:15px}
+th,td{border:1px solid var(--line);padding:11px 13px;text-align:left;vertical-align:top}
+th{background:#172033}
+.pick{font-size:22px;font-weight:700;color:var(--acc);margin:4px 0 2px}
+.reason{color:#cbd5e1;font-size:15px;margin:10px 0 0}
+code{background:#0b1220;border:1px solid var(--line);border-radius:6px;padding:2px 6px;font-size:14px;color:#7dd3fc}
+a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
+.note{font-size:14px;color:var(--mut);border-top:1px solid var(--line);margin-top:34px;padding-top:14px}
+.hide{display:none}
+</style>
+</head>
+<body><div class="wrap">
+
+<h1>AI 模型选择器</h1>
+<p class="sub">4 个问题，告诉你该用哪个模型　<span>｜<a href="./">返回比价与选站指南</a></span></p>
+
+<div class="card">
+  <div class="q">
+    <p class="qtitle">1. 你主要拿它做什么？</p>
+    <div class="opts" id="q1">
+      <label class="opt on"><input type="radio" name="task" value="code" checked>写代码、改 bug、读报错</label>
+      <label class="opt"><input type="radio" name="task" value="zh">中文写作、翻译、公文</label>
+      <label class="opt"><input type="radio" name="task" value="long">长文档分析、整本 PDF</label>
+      <label class="opt"><input type="radio" name="task" value="reason">复杂推理、多步计算</label>
+      <label class="opt"><input type="radio" name="task" value="batch">批量处理（几百上千条）</label>
+    </div>
+  </div>
+
+  <div class="q">
+    <p class="qtitle">2. 预算敏感吗？</p>
+    <div class="opts" id="q2">
+      <label class="opt on"><input type="radio" name="budget" value="high" checked>很敏感，能省就省</label>
+      <label class="opt"><input type="radio" name="budget" value="mid">一般，够用就行</label>
+      <label class="opt"><input type="radio" name="budget" value="low">不敏感，效果优先</label>
+    </div>
+  </div>
+
+  <div class="q">
+    <p class="qtitle">3. 单次输入会超过 10 万 token 吗？</p>
+    <div class="opts" id="q3">
+      <label class="opt on"><input type="radio" name="ctx" value="small" checked>不会，一般几千字</label>
+      <label class="opt"><input type="radio" name="ctx" value="big">会，整本书 / 全年财报那种</label>
+    </div>
+  </div>
+
+  <div class="q">
+    <p class="qtitle">4. 你用什么客户端？</p>
+    <div class="opts" id="q4">
+      <label class="opt on"><input type="radio" name="client" value="chat" checked>网页/客户端聊天（NextChat、Cherry Studio 等）</label>
+      <label class="opt"><input type="radio" name="client" value="cli">命令行工具（Claude Code、Codex CLI）</label>
+    </div>
+  </div>
+</div>
+
+<div class="card" id="result">
+  <p class="sub" style="margin:0 0 6px">推荐结果</p>
+  <p class="pick" id="pickName">—</p>
+  <p class="reason" id="pickReason"></p>
+  <p class="reason" id="pickWarn" style="color:#fbbf24"></p>
+</div>
+
+<h2>推荐的判断逻辑</h2>
+<table>
+<tr><th>你的情况</th><th>推荐</th><th>为什么</th></tr>
+<tr><td>写代码、改 bug</td><td>DeepSeek Flash 版</td><td>代码能力强，响应快，单价低，适合高频调用</td></tr>
+<tr><td>中文写作、翻译</td><td>GLM 系列</td><td>中文语感和公文写作是强项</td></tr>
+<tr><td>长文档、整本 PDF</td><td>Kimi 系列</td><td>上下文窗口大，长文档理解是主打方向</td></tr>
+<tr><td>复杂推理、多步计算</td><td>DeepSeek 推理版</td><td>思考链更完整，但价格更高、更慢</td></tr>
+<tr><td>批量处理</td><td>单价最低那档</td><td>量大时单价差异被放大，配合重试机制</td></tr>
+</table>
+
+<h2>三个容易忽略的点</h2>
+<ul>
+<li><strong>「最好的模型」不一定是最适合你的。</strong>写周报用推理版，多花的钱不会让周报写得更好，只会更慢。</li>
+<li><strong>先看客户端支持什么协议。</strong>Claude Code 只能走 Anthropic 协议，选平台前先确认支持。</li>
+<li><strong>长上下文不等于省钱。</strong>把整本 PDF 塞进去，输入 token 会爆。分段摘要通常更便宜也更准。</li>
+</ul>
+
+<div class="note">
+<p>本页由 <a href="https://l7shop.xyz" rel="nofollow">l7shop.xyz</a> 维护。推荐逻辑是通用经验，不构成对任何模型的性能承诺；同系列不同版本能力有差异，请以官方文档为准。</p>
+<p><a href="./">← 返回比价与选站指南</a>　·　<a href="cost-calculator.html">成本计算器</a>　·　<a href="glm-kimi-api.html">GLM / Kimi 怎么接</a></p>
+</div>
+
+</div>
+<script>
+(function () {
+  var MODELS = {
+    code:   { name: 'DeepSeek V4.1-Flash-1017', why: '代码任务的首选：写代码、改 bug、解释报错都稳，而且响应快、单价低，适合每天高频调用。' },
+    zh:     { name: 'GLM-5.3', why: '中文语感和公文写作是它的强项，翻译和术语统一也比通用模型更稳。' },
+    long:   { name: 'Kimi K3', why: '长上下文是它的主打方向，整本 PDF、长报告、多文档交叉比对都适合。' },
+    reason: { name: 'DeepSeek 推理版', why: '复杂推理、多步计算、需要完整思考链的任务，用推理版效果明显更好。' },
+    batch:  { name: 'DeepSeek V4.1-Flash-1017（批量档）', why: '批量任务拼的是单价和稳定性。用最便宜的那档，配好重试和失败队列。' }
+  };
+
+  function get(name) {
+    var el = document.querySelector('input[name="' + name + '"]:checked');
+    return el ? el.value : null;
+  }
+
+  function render() {
+    var task = get('task'), budget = get('budget'), ctx = get('ctx'), client = get('client');
+    var m = MODELS[task] || MODELS.code;
+    var name = m.name, why = m.why, warn = '';
+
+    if (ctx === 'big' && task !== 'long') {
+      name = 'Kimi K3';
+      why = '你提到单次输入会超过 10 万 token，这种场景优先看上下文窗口，Kimi K3 更合适。';
+    }
+    if (task === 'reason' && budget === 'high') {
+      warn = '注意：推理版单价通常明显高于 Flash 版，预算敏感的话建议只在对质量要求高的任务上用它。';
+    }
+    if (budget === 'high' && (task === 'code' || task === 'batch')) {
+      warn = '预算敏感时，Flash 档是性价比最高的选择；不要为了「更强的模型」多付几倍单价。';
+    }
+    if (client === 'cli' && task === 'code') {
+      warn += (warn ? ' ' : '') + '命令行工具（Claude Code 等）走 Anthropic 协议，选平台前先确认它提供 Anthropic 兼容接口。';
+    }
+
+    document.getElementById('pickName').textContent = name;
+    document.getElementById('pickReason').textContent = why;
+    document.getElementById('pickWarn').textContent = warn;
+  }
+
+  // 高亮选中的选项
+  document.querySelectorAll('.opt input').forEach(function (inp) {
+    inp.addEventListener('change', function () {
+      var group = inp.closest('.opts');
+      group.querySelectorAll('.opt').forEach(function (l) { l.classList.remove('on'); });
+      inp.closest('.opt').classList.add('on');
+      render();
+    });
+  });
+
+  render();
+})();
+</script>
+</body></html>
