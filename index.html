@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI API 中转站比价与选站指南｜倍率、稳定性、避坑（2026）</title>
+<meta name="description" content="国内用 DeepSeek、GLM、Kimi 等大模型 API 的比价与选站指南：倍率怎么算、怎么判断中转站是否掺水降智、OpenAI/Anthropic 双协议配置步骤、常见报错与避坑清单。">
+<meta name="keywords" content="AI API 中转站,API 中转,大模型 API 比价,DeepSeek API 价格,GLM API,Kimi API,API 倍率,OpenAI 兼容接口">
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="https://huangjinpeng216.github.io/ai-api-relay-pricing-cn/">
+<style>
+:root{--bg:#0f172a;--card:#1e293b;--line:#334155;--tx:#e2e8f0;--mut:#94a3b8;--acc:#38bdf8}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.75 -apple-system,"PingFang SC","Microsoft YaHei",sans-serif}
+.wrap{max-width:860px;margin:0 auto;padding:48px 20px 80px}
+h1{font-size:32px;line-height:1.35;margin:0 0 12px}
+h2{font-size:22px;margin:44px 0 14px;padding-left:12px;border-left:4px solid var(--acc)}
+h3{font-size:17px;margin:24px 0 8px;color:#cbd5e1}
+p,li{color:#cbd5e1}
+.sub{color:var(--mut);margin:0 0 32px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px 22px;margin:18px 0}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:15px}
+th,td{border:1px solid var(--line);padding:10px 12px;text-align:left}
+th{background:#172033;color:#cbd5e1;font-weight:600}
+code{background:#0b1220;border:1px solid var(--line);border-radius:6px;padding:2px 6px;font-size:14px;color:#7dd3fc}
+pre{background:#0b1220;border:1px solid var(--line);border-radius:10px;padding:16px;overflow:auto}
+pre code{border:0;background:none;padding:0}
+a{color:var(--acc);text-decoration:none}
+a:hover{text-decoration:underline}
+.tag{display:inline-block;font-size:13px;color:#7dd3fc;border:1px solid #1e40af;background:#0b1a33;border-radius:999px;padding:2px 12px;margin-right:8px}
+.note{font-size:14px;color:var(--mut);border-top:1px solid var(--line);margin-top:36px;padding-top:16px}
+.cta{display:inline-block;background:linear-gradient(90deg,#2563eb,#22d3ee);color:#04121f;font-weight:700;padding:12px 26px;border-radius:10px;margin-top:8px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>AI API 中转站比价与选站指南</h1>
+<p class="sub">倍率怎么算 · 怎么判断掺水降智 · 双协议配置 · 避坑清单　<span class="tag">2026 持续更新</span></p>
+
+<div class="card">
+<p><strong>一句话版本：</strong>国内用大模型 API，第一道门槛不是价格而是<strong>支付方式</strong>；第二道是<strong>怎么判断一个中转站靠不靠谱</strong>。这篇把两件事讲清楚。</p>
+<p><strong>声明：</strong>本页面由 <a href="https://l7shop.xyz" rel="nofollow">l7shop.xyz</a> 维护，表格中包含自家站点并已明确标注。数据以各家官网公示为准，欢迎纠正。</p>
+</div>
+
+<h2>一、先搞懂「倍率」</h2>
+<p>大模型 API 按 token 计费（输入、输出分别计价）。官方价格以美元计，所以国内用户第一道门槛是外币信用卡。</p>
+<p>中转站的本质是一层代理：你用人民币充值，它用上游额度帮你调用。价格用「倍率」表示：</p>
+<table>
+<tr><th>倍率</th><th>含义</th><th>官方 1 美元的量，你要付</th></tr>
+<tr><td>0.1x</td><td>官方价 1 折</td><td>0.1 美元等值人民币</td></tr>
+<tr><td>0.15x</td><td>官方价 1.5 折</td><td>0.15 美元等值人民币</td></tr>
+<tr><td>0.5x</td><td>官方价一半</td><td>0.5 美元等值人民币</td></tr>
+</table>
+<p><strong>2026 年市场行情大致在 0.15x ~ 0.5x。</strong>低于 0.1x 的要格外留意：要么上游来路不明，要么会在别处省成本（降级模型、限流、跑路）。</p>
+
+<h2>二、选站五项标准（比价格重要）</h2>
+
+<h3>1. 稳定性</h3>
+<p>最容易被忽略、但最贵。便宜的站天天 502，你搭进去的时间和 token 成本远超省下的钱。<br>
+<strong>测法：</strong>充最小额度，连续用三天，看有没有超时和 502。</p>
+
+<h3>2. 是不是满血模型</h3>
+<p>有些站宣传完整版，实际降级成小模型。<br>
+<strong>测法：</strong>问一个需要长链条推理的问题，对比回答质量和延迟。</p>
+
+<h3>3. 协议兼容</h3>
+<p>只支持 OpenAI 格式的，Cursor、Claude Code 这类工具用不了。<strong>双协议（OpenAI + Anthropic）</strong>最省事。</p>
+
+<h3>4. 用量明细</h3>
+<p>能不能看到每次调用的 token 数、时间、模型名。出问题时这是唯一排查依据。</p>
+
+<h3>5. 支付方式</h3>
+<p>支付宝 / 微信直充的，比要外币卡的省一大截麻烦。</p>
+
+<h2>三、对比表</h2>
+<p class="sub">倍率为官网公示值，可能随时调整，请以官网为准。</p>
+<table>
+<tr><th>站点</th><th>倍率</th><th>协议</th><th>主要模型</th><th>支付</th><th>备注</th></tr>
+<tr>
+  <td><a href="https://l7shop.xyz" rel="nofollow">l7shop.xyz</a></td>
+  <td><strong>0.1x</strong></td>
+  <td>OpenAI + Anthropic</td>
+  <td>DeepSeek V4.1-Flash-1017 / GLM-5.3 / Kimi K3</td>
+  <td>支付宝 / 微信</td>
+  <td>本页维护方，有完整调用日志</td>
+</tr>
+<tr><td>待补充</td><td>—</td><td>—</td><td>—</td><td>—</td><td>欢迎提 Issue 补充</td></tr>
+</table>
+
+<h2>四、配置三步（OpenAI 兼容客户端通用）</h2>
+<p>不管用 NextChat、LobeChat、Cherry Studio 还是 Cline，配置项都是这三个：</p>
+<table>
+<tr><th>项</th><th>填什么</th></tr>
+<tr><td>Base URL</td><td>站点 API 地址 + <code>/v1</code></td></tr>
+<tr><td>API Key</td><td>控制台里 <code>sk-</code> 开头那串</td></tr>
+<tr><td>模型名</td><td>必须和站点列出的完全一致，一个字符都不能错</td></tr>
+</table>
+
+<h3>两个最常见报错</h3>
+<table>
+<tr><th>报错</th><th>原因</th></tr>
+<tr><td><code>401 Unauthorized</code></td><td>Base URL 少了 <code>/v1</code>，或 Key 复制时带了空格</td></tr>
+<tr><td><code>model not found</code></td><td>模型名拼错，或该模型在你当前分组不可用</td></tr>
+</table>
+
+<h2>五、避坑清单</h2>
+<ul>
+<li><strong>不要一次充太多。</strong>中转站跑路是真实风险，建议一次充够两周用量。</li>
+<li><strong>API Key 别提交进代码。</strong>推到 GitHub 后几分钟内会被爬虫扫到，余额可能被刷光。用环境变量。</li>
+<li><strong>先用小额度测，再上生产。</strong>批量任务前先跑十次调用，看延迟和成功率。</li>
+<li><strong>别信「永久有效」「永不封号」。</strong>上游政策一变，谁都保证不了。</li>
+<li><strong>留好调用日志。</strong>出问题时这是唯一的证据。</li>
+</ul>
+
+<h2>六、常见问题</h2>
+
+<h3>Q：中转站和官方 API 有什么区别？</h3>
+<p>官方直连需要外币信用卡，按美元结算；中转站是第三方代理，人民币充值，把请求转发给上游。功能上兼容 OpenAI/Anthropic 接口规范，差别在价格、稳定性和上游来源。</p>
+
+<h3>Q：倍率越低越好吗？</h3>
+<p>不是。倍率只是价格维度。低于市场行情的倍率通常意味着上游来路不明或在别处省成本，实际用起来可能更贵。</p>
+
+<h3>Q：怎么验证是不是满血模型？</h3>
+<p>用同一段需要多步推理的 prompt，在官方和该站各跑一次，对比输出质量、思考深度和首字延迟。差距明显就是被降级了。</p>
+
+<h3>Q：支持 Claude Code / Cursor 吗？</h3>
+<p>取决于站点是否提供 Anthropic 兼容接口。只支持 OpenAI 格式的站点无法直接给 Claude Code 用。</p>
+
+<div class="note">
+<p>本页内容为信息汇总，不构成推荐或担保。使用第三方 API 服务涉及数据处理和内容合规问题，请自行评估业务场景。</p>
+<p>项目地址：<a href="https://github.com/huangjinpeng216/ai-api-relay-pricing-cn">github.com/huangjinpeng216/ai-api-relay-pricing-cn</a>　｜　最后更新：2026-10</p>
+</div>
+
+</div>
+</body>
+</html>
