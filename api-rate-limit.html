@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>API 并发与限流怎么处理｜429、指数退避、批量任务重试设计（2026）</title>
+<meta name="description" content="调用大模型 API 遇到 429 限流怎么办：并发与 QPS 的区别、指数退避重试的正确写法、批量任务如何控制节奏、流式请求的中断重连，以及如何判断是限流还是额度耗尽。">
+<meta name="keywords" content="API 429,API 限流,并发控制,指数退避,API 重试,批量任务 API,Rate Limit">
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="https://huangjinpeng216.github.io/ai-api-relay-pricing-cn/api-rate-limit.html">
+<style>
+:root{--bg:#0f172a;--card:#1e293b;--line:#334155;--tx:#e2e8f0;--mut:#94a3b8;--acc:#38bdf8}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.75 -apple-system,"PingFang SC","Microsoft YaHei",sans-serif}
+.wrap{max-width:840px;margin:0 auto;padding:48px 20px 80px}
+h1{font-size:29px;line-height:1.4;margin:0 0 10px}
+h2{font-size:20px;margin:36px 0 10px;padding-left:12px;border-left:4px solid var(--acc)}
+h3{font-size:17px;margin:22px 0 6px;color:#e2e8f0}
+p,li{color:#cbd5e1}.sub{color:var(--mut);margin:0 0 26px}
+code{background:#0b1220;border:1px solid var(--line);border-radius:6px;padding:2px 6px;font-size:14px;color:#7dd3fc}
+pre{background:#0b1220;border:1px solid var(--line);border-radius:10px;padding:15px;overflow:auto;font-size:14px;line-height:1.65}
+pre code{border:0;background:none;padding:0}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:15px}
+th,td{border:1px solid var(--line);padding:10px 12px;text-align:left;vertical-align:top}th{background:#172033}
+a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 20px;margin:14px 0}
+.note{font-size:14px;color:var(--mut);border-top:1px solid var(--line);margin-top:32px;padding-top:14px}
+</style>
+</head>
+<body><div class="wrap">
+
+<h1>API 并发与限流怎么处理</h1>
+<p class="sub">429 的真实含义 · 指数退避 · 批量任务节奏 · 流式中断重连　<span>｜<a href="./">返回比价指南</a></span></p>
+
+<div class="card">
+<p><strong>先分清两件事：</strong>限流（rate limit）是「你太快了」，稍等就能过；额度耗尽（quota）是「你没钱了」，重试多少次都没用。看到 429 先做这个判断，否则会白白重试几百次。</p>
+</div>
+
+<h2>一、并发和 QPS 不是一回事</h2>
+<table>
+<tr><th>概念</th><th>含义</th><th>常见限制形式</th></tr>
+<tr><td>并发（concurrency）</td><td>同一时刻有 N 个请求在处理</td><td>「最多 5 路并发」</td></tr>
+<tr><td>QPS / RPM</td><td>每秒 / 每分钟发出的请求数</td><td>「60 次/分钟」</td></tr>
+<tr><td>TPM</td><td>每分钟消耗的 token 数</td><td>「10 万 token/分钟」</td></tr>
+</table>
+<p>很多服务商同时限制这三项。你的程序看起来很慢，可能不是网络慢，而是被 TPM 卡住了。</p>
+
+<h2>二、429 的三种真实原因</h2>
+<ol>
+<li><strong>真的太快</strong>：瞬时并发或 RPM 超限。→ 加退避重试即可。</li>
+<li><strong>额度不足被软拒绝</strong>：部分中转站余额低时会返回 429 而不是 402。→ 查余额。</li>
+<li><strong>上游共池拥塞</strong>：同池其他用户流量大到影响你。→ 换模型或错峰。</li>
+</ol>
+<p>区分方法：看响应体里的 <code>error.message</code>，以及重试后是否稳定复现。稳定复现 + 换个时间段也一样 → 大概率不是你的问题。</p>
+
+<h2>三、正确的重试写法：指数退避 + 抖动</h2>
+<pre><code>async function callWithRetry(fn, maxRetries = 5) {
+  for (let attempt = 0; attempt &lt;= maxRetries; attempt++) {
+    try {
+      return await fn();
+    } catch (e) {
+      const status = e.status || e.response?.status;
+      // 只有限流和 5xx 才值得重试
+      if (status !== 429 &amp;&amp; !(status &gt;= 500 &amp;&amp; status &lt; 600)) throw e;
+      if (attempt === maxRetries) throw e;
+
+      const base = 1000 * 2 ** attempt;        // 1s, 2s, 4s, 8s...
+      const jitter = Math.random() * 400;      // 抖动，避免同时重试
+      await new Promise(r =&gt; setTimeout(r, base + jitter));
+    }
+  }
+}</code></pre>
+<p><strong>关键点：</strong></p>
+<ul>
+<li>只对 <code>429</code> 和 <code>5xx</code> 重试，<code>400/401/403/404</code> 重试毫无意义</li>
+<li>必须加抖动（jitter），否则所有客户端会在同一秒一起重试，形成二次雪崩</li>
+<li>重试要有上限，避免死循环烧钱</li>
+</ul>
+
+<h2>四、批量任务：用队列 + 令牌桶控制节奏</h2>
+<pre><code>// 简单做法：固定并发 + 每条之间留间隔
+const limit = 3;          // 并发数
+const gap = 200;          // 每条之间的间隔 ms
+const queue = [...tasks];
+
+async function worker() {
+  while (queue.length) {
+    const task = queue.shift();
+    if (!task) break;
+    await callWithRetry(() =&gt; run(task));
+    await new Promise(r =&gt; setTimeout(r, gap));
+  }
+}
+
+await Promise.all(Array.from({ length: limit }, worker));</code></pre>
+<p>经验值：从 <strong>2～3 并发 + 200ms 间隔</strong>起步，观察 429 率。低于 1% 就可以往上加；超过 5% 就降回来。</p>
+
+<h2>五、流式请求中断怎么办</h2>
+<table>
+<tr><th>现象</th><th>原因</th><th>处理</th></tr>
+<tr><td>输出到一半断开</td><td>代理层超时、网络抖动</td><td>捕获中断，从已生成内容后继续（把已有输出作为 assistant 消息续写）</td></tr>
+<tr><td>一直没有数据返回</td><td>首字延迟高，或 SSE 未透传</td><td>加读超时（如 60s），超时后降级为非流式</td></tr>
+<tr><td>报 SSE 解析错误</td><td>客户端没处理 <code>data: [DONE]</code> 或空行</td><td>按行解析，忽略空行与注释行</td></tr>
+</table>
+
+<h2>六、比限流更贵的两个坑</h2>
+<ul>
+<li><strong>无上限重试烧钱。</strong>失败请求在上游可能仍计费。务必设最大重试次数和每日预算。</li>
+<li><strong>并发开太大反而更慢。</strong>上游排队后延迟上升，成功率下降，总耗时反而更长。</li>
+</ul>
+
+<h2>七、一张调参表</h2>
+<table>
+<tr><th>场景</th><th>并发</th><th>间隔</th><th>重试上限</th></tr>
+<tr><td>单条交互（用户等待）</td><td>1</td><td>—</td><td>2（要快）</td></tr>
+<tr><td>小批量（几十条）</td><td>2～3</td><td>200ms</td><td>3</td></tr>
+<tr><td>大批量离线（上千条）</td><td>3～5</td><td>100～300ms</td><td>5 + 死信队列</td></tr>
+<tr><td>长文本生成</td><td>1～2</td><td>500ms</td><td>2（易超时）</td></tr>
+</table>
+
+<div class="note">
+<p>本页由 <a href="https://l7shop.xyz" rel="nofollow">l7shop.xyz</a> 维护。具体限流阈值以各服务商公示为准。</p>
+<p><a href="./">← 返回比价与选站指南</a>　｜　<a href="api-error-codes.html">报错大全 →</a></p>
+</div>
+
+</div></body></html>
