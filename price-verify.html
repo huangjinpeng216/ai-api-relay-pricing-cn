@@ -39,7 +39,16 @@ a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
   code{word-break:break-all}
   pre code{word-break:normal}
 }
-</style>
+.pagenav{border-top:1px solid var(--line);margin-top:34px;padding-top:16px}
+.pagenav>p{font-size:14px;color:var(--mut);margin:0 0 8px}
+.pagenav>ul{list-style:none;padding:0;margin:0;display:flex;flex-wrap:wrap;gap:8px 18px}
+.pagenav>ul li{font-size:14.5px}
+.pagenav a{color:var(--acc);text-decoration:none}
+.pagenav a:hover{text-decoration:underline}
+@media (max-width:640px){
+  .pagenav>ul{gap:6px 14px}
+  .pagenav>ul li{font-size:13.5px}
+}</style>
 </head>
 <body><div class="wrap">
 
@@ -127,6 +136,18 @@ const rows = await page.evaluate(() =>
 <p class="warn">即便如此，也请你自己核一次。价格会调整，而这一页会比你晚知道。</p>
 </div>
 
+<nav class="pagenav">
+  <p>相关内容</p>
+  <ul>
+    <li><a href="./">比价与选站指南</a></li>
+    <li><a href="api-price-table.html">官方价格表</a></li>
+    <li><a href="cost-calculator.html">成本计算器</a></li>
+    <li><a href="model-selector.html">模型选择器</a></li>
+    <li><a href="api-relay-pitfalls.html">避雷指南</a></li>
+    <li><a href="client-setup.html">客户端配置</a></li>
+    <li><a href="api-error-codes.html">报错大全</a></li>
+  </ul>
+</nav>
 <div class="note">
 <p>本页由 <a href="https://l7shop.xyz" rel="nofollow">l7shop.xyz</a> 维护。价格请以各家官方文档和控制台账单为准。</p>
 <p><a href="./">← 返回 AI API 中转站比价与选站指南</a>　·　<a href="api-price-table.html">官方价格表</a>　·　<a href="cost-calculator.html">成本计算器</a></p>
