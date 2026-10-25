@@ -48,6 +48,7 @@ code{background:#0b1220;border:1px solid var(--line);border-radius:6px;padding:2
 a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
 .note{font-size:14px;color:var(--mut);border-top:1px solid var(--line);margin-top:34px;padding-top:14px}
 .hide{display:none}
+#pickWarn{white-space:pre-line}
 </style>
 </head>
 <body><div class="wrap">
@@ -182,25 +183,25 @@ a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
   function render() {
     var task = get('task'), budget = get('budget'), ctx = get('ctx'), client = get('client');
     var m = MODELS[task] || MODELS.code;
-    var name = m.name, why = m.why, warn = '';
+    var name = m.name, why = m.why; var warns = [];
 
     if (ctx === 'big' && task !== 'long') {
       name = 'Kimi K3';
       why = '你提到单次输入会超过 10 万 token，这种场景优先看上下文窗口，Kimi K3 更合适。';
     }
     if (task === 'reason' && budget === 'high') {
-      warn = '注意：推理版单价通常明显高于 Flash 版，预算敏感的话建议只在对质量要求高的任务上用它。';
+      warns.push('注意：推理版单价通常明显高于 Flash 版，预算敏感的话建议只在对质量要求高的任务上用它。');
     }
     if (budget === 'high' && (task === 'code' || task === 'batch')) {
-      warn = '预算敏感时，Flash 档是性价比最高的选择；不要为了「更强的模型」多付几倍单价。';
+      warns.push('预算敏感时，Flash 档是性价比最高的选择；不要为了「更强的模型」多付几倍单价。');
     }
     if (client === 'cli' && task === 'code') {
-      warn += (warn ? ' ' : '') + '命令行工具（Claude Code 等）走 Anthropic 协议，选平台前先确认它提供 Anthropic 兼容接口。';
+      warns.push('命令行工具（Claude Code 等）走 Anthropic 协议，选平台前先确认它提供 Anthropic 兼容接口。');
     }
 
     document.getElementById('pickName').textContent = name;
     document.getElementById('pickReason').textContent = why;
-    document.getElementById('pickWarn').textContent = warn;
+    document.getElementById('pickWarn').textContent = warns.join('\n');
   }
 
   // 高亮选中的选项
