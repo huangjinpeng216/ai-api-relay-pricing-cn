@@ -8,6 +8,61 @@
 <meta name="keywords" content="AI API 中转站,API 中转,大模型 API 比价,DeepSeek API 价格,GLM API,Kimi API,API 倍率,OpenAI 兼容接口">
 <meta name="robots" content="index,follow">
 <link rel="canonical" href="https://huangjinpeng216.github.io/ai-api-relay-pricing-cn/">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "TechArticle",
+      "headline": "AI API 中转站比价与选站指南（2026）",
+      "description": "国内用 DeepSeek、GLM、Kimi 等大模型 API 的比价与选站指南：倍率怎么算、怎么判断中转站是否掺水降智、OpenAI/Anthropic 双协议配置步骤、常见报错与避坑清单。",
+      "inLanguage": "zh-CN",
+      "datePublished": "2026-10-26",
+      "dateModified": "2026-10-26",
+      "author": { "@type": "Organization", "name": "l7shop", "url": "https://l7shop.xyz" },
+      "publisher": { "@type": "Organization", "name": "l7shop", "url": "https://l7shop.xyz" },
+      "mainEntityOfPage": "https://huangjinpeng216.github.io/ai-api-relay-pricing-cn/"
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "中转站和官方 API 有什么区别？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "官方直连需要外币信用卡，按美元结算；中转站是第三方代理，人民币充值，把请求转发给上游。功能上兼容 OpenAI/Anthropic 接口规范，差别在价格、稳定性和上游来源。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "倍率越低越好吗？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "不是。倍率只是价格维度。低于市场行情的倍率通常意味着上游来路不明或在别处省成本，实际用起来可能更贵。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "怎么验证是不是满血模型？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "用同一段需要多步推理的 prompt，在官方和该站各跑一次，对比输出质量、思考深度和首字延迟。差距明显就是被降级了。"
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "支持 Claude Code / Cursor 吗？",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "取决于站点是否提供 Anthropic 兼容接口。只支持 OpenAI 格式的站点无法直接给 Claude Code 用。"
+          }
+        }
+      ]
+    }
+  ]
+}
+</script>
 <style>
 :root{--bg:#0f172a;--card:#1e293b;--line:#334155;--tx:#e2e8f0;--mut:#94a3b8;--acc:#38bdf8}
 *{box-sizing:border-box}
