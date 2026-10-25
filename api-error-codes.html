@@ -8,6 +8,39 @@
 <meta name="keywords" content="API 401,API 429,model not found,insufficient_quota,context_length_exceeded,OpenAI 报错,API 调用失败,中转站报错">
 <meta name="robots" content="index,follow">
 <link rel="canonical" href="https://huangjinpeng216.github.io/ai-api-relay-pricing-cn/api-error-codes.html">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "API 返回 401 Unauthorized 怎么办？",
+      "acceptedAnswer": { "@type": "Answer", "text": "401 表示认证失败。常见原因：Key 复制时带了空格或换行、base_url 路径不对、Key 已被删除。用 curl 直接请求 /v1/models 验证。" }
+    },
+    {
+      "@type": "Question",
+      "name": "API 返回 404 Not Found 怎么办？",
+      "acceptedAnswer": { "@type": "Answer", "text": "404 表示路径不存在。多为 base_url 多了或少了 /v1，或结尾多了斜杠。base_url 只填到版本号为止。" }
+    },
+    {
+      "@type": "Question",
+      "name": "model not found 是什么原因？",
+      "acceptedAnswer": { "@type": "Answer", "text": "模型名不存在或当前分组无权限。常见于模型名拼错、自己猜的名字、或该模型未在所在分组开放。请从站点模型列表复制准确名称。" }
+    },
+    {
+      "@type": "Question",
+      "name": "API 返回 429 Too Many Requests 怎么处理？",
+      "acceptedAnswer": { "@type": "Answer", "text": "429 表示触发限流。可能是并发过高、请求频率超限，或余额不足时的软拒绝。处理方式：降低并发、加入带抖动的指数退避重试、检查余额。" }
+    },
+    {
+      "@type": "Question",
+      "name": "insufficient_quota 是什么意思？",
+      "acceptedAnswer": { "@type": "Answer", "text": "额度用完。查账户余额和分组额度，确认是否被其他项目共用同一个 key 消耗。" }
+    }
+  ]
+}
+</script>
 <style>
 :root{--bg:#0f172a;--card:#1e293b;--line:#334155;--tx:#e2e8f0;--mut:#94a3b8;--acc:#38bdf8;--warn:#f97316}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.75 -apple-system,"PingFang SC","Microsoft YaHei",sans-serif}
