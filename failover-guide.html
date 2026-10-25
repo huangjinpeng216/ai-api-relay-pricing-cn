@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>为什么你的 AI 应用需要一个 API 故障转移层｜单点故障与切换策略（2026）</title>
+<meta name="description" content="AI 应用的单点故障实录：上游 47 分钟不可用意味着什么。三种处理方式对比、什么错误该切换什么不该切、连续失败计数与冷却期设计、流式中断的处理，附零依赖开源实现。">
+<meta name="keywords" content="API 故障转移,API 高可用,中转站 挂掉,API 重试策略,流式中断,OpenAI 代理 故障转移">
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="https://huangjinpeng216.github.io/ai-api-relay-pricing-cn/failover-guide.html">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"TechArticle","headline":"为什么你的 AI 应用需要一个 API 故障转移层","inLanguage":"zh-CN","datePublished":"2026-10-26","dateModified":"2026-10-26","author":{"@type":"Organization","name":"l7shop","url":"https://l7shop.xyz"}}
+</script>
+<style>
+:root{--bg:#0f172a;--card:#1e293b;--line:#334155;--tx:#e2e8f0;--mut:#94a3b8;--acc:#38bdf8}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.8 -apple-system,"PingFang SC","Microsoft YaHei",sans-serif}
+.wrap{max-width:840px;margin:0 auto;padding:48px 20px 80px}
+h1{font-size:29px;line-height:1.4;margin:0 0 10px}
+h2{font-size:20px;margin:38px 0 12px;padding-left:12px;border-left:4px solid var(--acc)}
+h3{font-size:17px;margin:24px 0 8px;color:#e2e8f0}
+p,li{color:#cbd5e1}
+blockquote{margin:16px 0;padding:10px 16px;border-left:3px solid var(--line);color:var(--mut);background:#0b1220}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:15px}
+th,td{border:1px solid var(--line);padding:10px 12px;text-align:left;vertical-align:top}
+th{background:#172033}
+code{background:#0b1220;border:1px solid var(--line);border-radius:6px;padding:2px 6px;font-size:14px;color:#7dd3fc}
+pre{background:#0b1220;border:1px solid var(--line);border-radius:10px;padding:15px;overflow:auto;font-size:14px;line-height:1.6}
+pre code{border:0;background:none;padding:0}
+ul{margin:10px 0;padding-left:22px}
+a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
+.note{font-size:14px;color:var(--mut);border-top:1px solid var(--line);margin-top:34px;padding-top:14px}
+</style>
+</head>
+<body><div class="wrap">
+
+<h1>为什么你的 AI 应用需要一个 API 故障转移层</h1>
+<p style="color:var(--mut);margin:0 0 28px">单点故障的真实表现 · 三种处理方式 · 切换策略设计 · 流式中断　<span>｜<a href="./">返回比价与选站指南</a></span></p>
+
+<blockquote>一篇纯技术向的实践记录，讲清楚「单点故障」在 AI 应用里的具体表现、三种处理方式的取舍，以及自己搭一层故障转移时哪些坑必须避开。</blockquote>
+<blockquote>配套代码：一个 8KB 的零依赖实现（文末）。</blockquote>
+<p>---</p>
+<h2>一、一个真实的故障长什么样</h2>
+<p>周三下午，你的客服机器人突然不回消息了。日志里是这样：</p>
+<pre><code>
+15:02:11 POST /v1/chat/completions 200  1.2s
+15:02:15 POST /v1/chat/completions 200  1.1s
+15:03:40 POST /v1/chat/completions 502  30.0s   ← 开始
+15:03:41 POST /v1/chat/completions 502  30.0s
+15:03:43 POST /v1/chat/completions 502  30.0s
+...（持续 47 分钟）
+</code></pre>
+<p>上游服务商的一个节点挂了。你的代码没有任何 bug，但<strong>你的产品在这 47 分钟里是不可用的</strong>。</p>
+<p>如果这个 API 是你自己直连的官方服务，这种情况概率低但也会发生；如果你用的是第三方中转，概率会明显更高——因为中间多了一层你控制不了的组件。</p>
+<p>---</p>
+<h2>二、三种处理方式，从便宜到贵</h2>
+<h3>方式一：客户端加重试（最省事，但没用）</h3>
+<pre><code>
+for (let i = 0; i &lt; 3; i++) {
+  try { return await call(); }
+  catch (e) { await sleep(1000 * 2 ** i); }
+}
+</code></pre>
+<p><strong>为什么没用</strong>：重试解决的是「偶发抖动」，不是「上游挂了」。上游 47 分钟不可用，你重试 3 次花 7 秒，然后照样失败。</p>
+<p>重试是必需品，但它不是故障转移。</p>
+<h3>方式二：代码里写死备用站（有效，但侵入性强）</h3>
+<pre><code>
+try {
+  return await call(PRIMARY);
+} catch {
+  return await call(BACKUP);
+}
+</code></pre>
+<p><strong>问题</strong>：</p>
+<ul><li>每个调用点都要写一遍</li><li>切过去之后不会切回来（上游恢复了也不知道）</li><li>如果备用站 key 换了、额度没了，要改代码重新发布</li><li>流式输出时错误可能在**已经输出一半**之后才发生，重试会产生重复内容</li></ul>
+<h3>方式三：加一层本地代理（多一层，但一次解决）</h3>
+<pre><code>
+你的应用 ──► 本地代理 ──► 站点 A
+                 ├──────► 站点 B
+                 └──────► 站点 C
+</code></pre>
+<p>应用只认一个地址，代理负责选站、切换、回切。<strong>应用代码一行不改。</strong></p>
+<p>代价是多一跳（本地，通常 <2ms，可忽略）和一个需要维护的进程。</p>
+<p>---</p>
+<h2>三、设计这一层时，最关键的是「什么该切，什么不该切」</h2>
+<p>这是我踩过最深的坑。一开始我写的是「任何错误都切下一家」，结果：</p>
+<table>
+<tr><th>场景</td><td>无脑切换的后果</th></tr>
+<tr><td>客户端发了个格式错误的请求（400）</td><td>三个站各失败一次，浪费三倍时间，最后还是 400</td></tr>
+<tr><td>key 过期（401）</td><td>切到备用站也报 401（如果你三个站用同一把 key），纯浪费</td></tr>
+<tr><td>触发限流（429）</td><td>切下一家确实能过，但如果三家都限流，就是三倍消耗</td></tr>
+<tr><td>上游 5xx</td><td>✅ 该切</td></tr>
+<tr><td>连接超时</td><td>✅ 该切</td></tr>
+<tr><td>流式中途断流</td><td>✅ 该切，但要处理已输出的部分</td></tr>
+</table>
+<p><strong>正确的判断表</strong>：</p>
+<table>
+<tr><th>状态码</td><td>处理</td><td>理由</th></tr>
+<tr><td>5xx</td><td>切下一家</td><td>上游自己的问题</td></tr>
+<tr><td>超时 / 连接失败</td><td>切下一家</td><td>网络或上游问题</td></tr>
+<tr><td>401 / 403</td><td><strong>直接返回</strong></td><td>key 问题，换站解决不了</td></tr>
+<tr><td>429</td><td><strong>直接返回</strong>（或退避后重试同一家）</td><td>切站会放大消耗，且容易被判定为滥用</td></tr>
+<tr><td>其他 4xx</td><td><strong>直接返回</strong></td><td>请求本身有问题，换谁都没用</td></tr>
+</table>
+<p>这条规则写进代码只需要几个 if，但它决定了你的代理是「有用」还是「有害」。</p>
+<p>---</p>
+<h2>四、还有一个隐蔽问题：失败了要不要标记</h2>
+<p>「这次失败了就永久不用它」和「这次失败了下秒还用它」都不对。</p>
+<p>我最后用的策略是<strong>连续失败计数 + 冷却期</strong>：</p>
+<pre><code>
+连续失败 1 次  → 记一笔，继续用
+连续失败 2 次  → 记一笔，继续用
+连续失败 3 次  → 进入冷却 60 秒，期间不分配流量
+冷却期结束    → 重新试用，成功则计数清零
+</code></pre>
+<p>为什么是「连续」而不是「累计」：累计计数会让一个偶发失败的站永远翻不了身；连续计数能区分「偶尔抽风」和「真的挂了」。</p>
+<p>为什么要有冷却而不是直接剔除：上游会恢复。你不给它恢复的机会，就等于永久损失一个节点。</p>
+<p>---</p>
+<h2>五、流式输出是最麻烦的部分</h2>
+<p>非流式请求失败很好处理——重发就行。流式不一样：</p>
+<pre><code>
+data: {"choices":[{"delta":{"content":"今天"}}]}
+data: {"choices":[{"delta":{"content":"天气"}}]}
+                                    ← 连接断了
+</code></pre>
+<p>这时候用户屏幕上已经有「今天天气」了。你重发整个请求，用户会看到「今天天气今天天气不错」。</p>
+<p>处理方式有两种：</p>
+<p>1. <strong>不重发</strong>：把已输出的内容当作部分结果返回，告诉用户「响应中断」，让上层决定是否重试</p>
+<p>2. <strong>续写</strong>：把已输出内容作为 assistant 消息塞回上下文，让模型接着写</p>
+<p>我在实现里选了第一种——因为在代理层做「智能续写」会引入新的不确定行为，而代理的定位应该是<strong>透明</strong>。</p>
+<p>---</p>
+<h2>六、自己实现的话，最小可用版本长什么样</h2>
+<p>我写了一个，8KB，零依赖（只用 Node 内置模块）。核心就三件事：</p>
+<pre><code>
+// 1. 按权重挑顺序
+const seq = orderedUpstreams();
+
+// 2. 逐个尝试，5xx/超时才切
+for (const u of seq) {
+  try {
+    const res = await forward(u, req, body);
+    if (res.statusCode &gt;= 500) { markFail(u); continue; }
+    if (res.statusCode === 401) return passthrough(res);  // 不切
+    markSuccess(u);
+    return pipe(res);
+  } catch (e) {
+    markFail(u); continue;
+  }
+}
+
+// 3. 全挂了返回 502，并说明每家的失败原因
+return json502(errors);
+</code></pre>
+<p>配套的 <code>/health</code> 接口能看每家可用率和连续失败数：</p>
+<pre><code>
+{
+  "ok": true,
+  "upstreams": [
+    { "name": "primary",  "available": true,  "fails": 0, "successRate": 0.997 },
+    { "name": "backup-a", "available": false, "fails": 3, "cooldownSeconds": 42 }
+  ]
+}
+</code></pre>
+<p>---</p>
+<h2>七、两个实现时踩的坑（别人大概也会踩）</h2>
+<h3>坑一：`content-length` 和 `transfer-encoding` 同时存在</h3>
+<p>代理转发时把请求体读成了完整 buffer，就应该用 <code>content-length</code> 重发。如果同时保留了原始的 <code>transfer-encoding: chunked</code>，<strong>上游服务器会直接返回 400</strong>，而且不会告诉你原因。</p>
+<p>我在这上面浪费了半小时，最后是打印上游收到的原始请求才发现的。</p>
+<h3>坑二：base_url 重复拼接</h3>
+<p>用户的配置里 <code>baseUrl</code> 常常已经带 <code>/v1</code>（比如 <code>https://site/v1</code>），而客户端请求的路径也带 <code>/v1</code>（<code>/v1/chat/completions</code>）。直接拼接变成 <code>/v1/v1/chat/completions</code> → 全部 404。</p>
+<p>修法是拼接前做一次前缀去重。</p>
+<p>---</p>
+<h2>八、要不要自己做一个</h2>
+<p>三个判断标准：</p>
+<table>
+<tr><th>你的情况</td><td>建议</th></tr>
+<tr><td>只用一个站，偶尔失败，能接受短暂不可用</td><td>客户端重试够了，别加复杂度</td></tr>
+<tr><td>余额分散在几家，手动切换嫌麻烦</td><td>值得做一层代理</td></tr>
+<tr><td>面向用户的产品，不可用会掉客户</td><td>必须做，而且要考虑的不止是切换</td></tr>
+</table>
+<p><strong>第三种情况我要多说一句</strong>：代理层解决的是「上游挂了自动切」，但解决不了「所有上游都挂了」。真到了那一步，你需要的是「降级策略」——比如用小模型顶上、或者直接告诉用户「稍后再试」，而不是让请求卡在那里转圈。</p>
+<p>---</p>
+<h2>九、代码</h2>
+<p>我把自己用的实现开源了，MIT，零依赖，带自测（<code>node test.mjs</code> 会启动三个假上游验证切换逻辑）：</p>
+<p><strong>https://github.com/huangjinpeng216/relay-failover</strong></p>
+<pre><code>
+git clone https://github.com/huangjinpeng216/relay-failover
+cd relay-failover
+cp config.example.json config.json   # 填入你的站点
+node server.mjs
+</code></pre>
+<p>然后把客户端的 <code>base_url</code> 指向 <code>http://127.0.0.1:8787/v1</code> 即可。</p>
+<p>示例配置里默认填了一个中转站（我运营的那个），你可以留着也可以全换成自己的——它只是个示例。</p>
+<p>---</p>
+<h2>十、最后一句</h2>
+<p>故障转移不是什么高深技术，一个下午就能写完。但它解决的是一类<strong>会持续发生、且发生时你毫无准备</strong>的问题。</p>
+<p>如果你现在正在用第三方 API 做东西，我建议你至少想一遍：</p>
+<blockquote>如果这个站明天早上打不开了，我的应用会怎样？</blockquote>
+<p>想清楚这个问题的答案，比读十篇工具推荐都有用。</p>
+
+<div class="note">
+<p>配套代码：<a href="https://github.com/huangjinpeng216/relay-failover">github.com/huangjinpeng216/relay-failover</a>（MIT，零依赖，带自测）</p>
+<p>本页由 <a href="https://l7shop.xyz" rel="nofollow">l7shop.xyz</a> 维护。文中的故障处理策略适用于任何第三方 API 服务，不针对特定服务商。</p>
+<p><a href="./">← 返回 AI API 中转站比价与选站指南</a>　·　<a href="api-relay-pitfalls.html">中转站避雷指南</a></p>
+</div>
+
+</div></body></html>
