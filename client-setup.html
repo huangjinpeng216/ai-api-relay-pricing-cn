@@ -98,6 +98,49 @@ a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
 </ol>
 <p>报错含义逐个查：<a href="api-error-codes.html">AI API 常见报错大全</a>。</p>
 
+<h2>八、多客户端共用一套 key 怎么管</h2>
+<p>很多人把同一个 key 填到五六个客户端里，出问题时分不清是谁在消耗。建议这样组织：</p>
+<table>
+<tr><th>做法</th><th>好处</th><th>代价</th></tr>
+<tr><td>一个客户端一个 key</td><td>能看清单个客户端的用量，泄露时只吊销一个</td><td>要记多个 key</td></tr>
+<tr><td>一个用途一个 key</td><td>按「写代码 / 写文案 / 批量任务」分开，好对账</td><td>配置稍麻烦</td></tr>
+<tr><td>全部共用一个 key</td><td>省事</td><td>出事无法定位，只能全换</td></tr>
+</table>
+<p>推荐第二种。多数平台支持给 key 起备注名（如 <code>cursor-mac</code>、<code>batch-job</code>），一眼能看出用途。</p>
+
+<h2>九、三个最容易踩的坑</h2>
+
+<h3>坑一：路径重复拼接</h3>
+<p>客户端的 base_url 只填到 <code>/v1</code> 为止。如果你填了 <code>https://站点/v1/chat/completions</code>，客户端再拼一次，就变成 <code>/v1/chat/completions/chat/completions</code>，必然 404。</p>
+
+<h3>坑二：key 前后带空格</h3>
+<p>从网页复制 key 时很容易带上换行或空格，肉眼看不出来，但请求会 401。粘贴后手动按一下 End 键检查末尾。</p>
+
+<h3>坑三：客户端走了系统代理</h3>
+<p>如果你电脑开着代理软件（哪怕只是浏览器插件），客户端可能也被接管，导致连不上国内的服务。表现是「浏览器能打开站点，客户端报连接失败」。这种情况在客户端设置里关掉代理，或加白名单。</p>
+
+<h2>十、常见问题</h2>
+
+<h3>Q：一个客户端能配多个站点吗？</h3>
+<p>多数支持。Cherry Studio 可以添加多个服务商；NextChat 可以配置多个自定义接口。建议把备用站也配上，主站出问题时能马上切。</p>
+
+<h3>Q：换站以后聊天记录会丢吗？</h3>
+<p>不会。聊天记录存在客户端本地，只跟模型服务和接口地址有关，换站不影响历史消息。</p>
+
+<h3>Q：手机上能配吗？</h3>
+<p>能。Cherry Studio、NextChat 都有移动端，配置项和桌面端一致。注意手机上的代理设置可能和电脑不同。</p>
+
+<h3>Q：为什么同一个模型，客户端 A 能用客户端 B 不能？</h3>
+<p>大概率是 B 的路径拼接方式不同，或 B 对模型名的校验更严格。先看 B 的报错码：401 是认证问题（路径或 key），model not found 是模型名问题。</p>
+
+<h2>十一、配好之后先做这三件事</h2>
+<ol>
+<li><strong>发一句最简单的提问</strong>，确认链路通（能回就说明 base_url 和 key 都对）</li>
+<li><strong>发一段需要多步推理的 prompt</strong>，确认不是被降级的模型（对比官方输出质量）</li>
+<li><strong>连续用两天</strong>，看有没有超时和断流，再决定要不要加量充值</li>
+</ol>
+<p class="sub">这三步花十分钟，能避免后面花几百块踩坑。</p>
+
 <div class="note">
 <p>本页由 <a href="https://l7shop.xyz" rel="nofollow">l7shop.xyz</a> 维护。各客户端界面可能随版本变化，以官方文档为准。</p>
 <p><a href="./">← 返回 AI API 中转站比价与选站指南</a></p>
