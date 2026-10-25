@@ -91,6 +91,10 @@ a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
 <p><strong>排查顺序建议：</strong>先确认 base_url 路径 → 再确认 key 有效 → 再确认模型名 → 最后看额度与并发。绝大多数问题出在前两步。</p>
 </div>
 
+<div class="card">
+<p><strong>如果你遇到的是 404 或「路径不存在」</strong>，先别怀疑服务商——八成是 <code>base_url</code> 多写或少写了 <code>/v1</code>。用<a href="config-generator.html">配置生成器</a>按客户端生成一遍，能排除这个变量。</p>
+</div>
+
 <h2>401 Unauthorized</h2>
 <p><strong>含义：</strong>认证失败，服务端不认你的 key。</p>
 <p><strong>常见原因：</strong></p>
