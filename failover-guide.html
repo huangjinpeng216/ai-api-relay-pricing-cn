@@ -67,7 +67,66 @@ a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
 <p>上游服务商的一个节点挂了。你的代码没有任何 bug，但<strong>你的产品在这 47 分钟里是不可用的</strong>。</p>
 <p>如果这个 API 是你自己直连的官方服务，这种情况概率低但也会发生；如果你用的是第三方中转，概率会明显更高——因为中间多了一层你控制不了的组件。</p>
 <p>---</p>
-<h2>二、三种处理方式，从便宜到贵</h2>
+<h2>二、2026 年 10 月的一次真实事故（我亲历的）</h2>
+<p class="sub">这一节不是编的例子，是我在实际监测中遇到的。它展示了故障转移赢不了的那种情况——以及怎么尽早发现。</p>
+
+<h3>现象</h3>
+<p>某个工作日的凌晨，一个第三方 API 中转站突然出现这个状态：</p>
+<pre><code>GET /             → 200  （网站能打开，页面正常）
+GET /v1/models    → 404  page not found
+POST /v1/chat/completions → 404  page not found
+POST /api/v1/auth/login   → 404  page not found</code></pre>
+
+<p><strong>网站看起来完全正常，但每一个 API 都返回 404。</strong></p>
+
+<h3>为什么这种故障最危险</h3>
+<p>用户打开网页，一切正常；一调用就报错。第一反应是「是不是我配置错了」，于是开始改 base_url、换 key、重装客户端——<strong>折腾半小时才发现是服务方的问题。</strong></p>
+<p>而服务方这边，如果只监控「网站能不能打开」，也是完全看不见的。</p>
+
+<h3>怎么在外部定位（不需要服务器权限）</h3>
+<p>我当时手上只有浏览器和 curl，靠三个测试把问题范围切了出来：</p>
+
+<p><strong>测试 1：请求一个必然会失败的路径，看 404 的形态</strong></p>
+<pre><code># 如果返回 HTML，说明是前端兜底
+curl -i https://站点/随便什么路径
+
+# 如果返回 "404 page not found" 纯文本，说明请求到了后端框架
+curl -i https://站点/v1/models</code></pre>
+
+<p><strong>测试 2：给前缀加倍，验证是不是路径被改写</strong></p>
+<pre><code># 如果反向代理剥掉了 /v1 前缀，那 /v1/v1/models 会被后端当成 /v1/models
+curl -i https://站点/v1/v1/models
+# 仍然 404 → 说明路径没被改写，问题不在反代</code></pre>
+
+<p><strong>测试 3：用响应头指纹区分不同的后端</strong></p>
+<pre><code># 主应用通常会给页面注入一次性 nonce
+curl -I https://站点/          # 看有没有 Content-Security-Policy: ... 'nonce-xxx'
+curl -I https://站点/v1/models # 如果这条没有 nonce，说明是另一个后端在处理</code></pre>
+
+<p>就是这一步发现了真相：<strong>网站的 API 路径被转发到了一个不是主应用的进程</strong>，而主应用本身的 API 路由也没注册（它只会返回前端页面）。</p>
+
+<h3>这个案例对故障转移的启示</h3>
+<table>
+<tr><th>启示</th><th>做法</th></tr>
+<tr><td>「网站能打开」不等于「服务可用」</td><td>健康检查要打 API 端点，不是首页</td></tr>
+<tr><td>404 比 500 更隐蔽</td><td>监控判据应是「未鉴权返回 401」，返回 404 就是故障</td></tr>
+<tr><td>单站故障转移救不了「全线故障」</td><td>多站池 + 降级策略都要有</td></tr>
+<tr><td>自己也会犯「只监控看得见的指标」的错</td><td>监控项要对着用户的真实路径设计</td></tr>
+</table>
+
+<div class="card">
+<p><strong>所以健康检查应该这么写：</strong></p>
+<pre><code># 正确：打 API 端点，期望 401（未鉴权但路由存在）
+curl -o /dev/null -w '%{http_code}\n' https://站点/v1/models
+# 401 → 正常
+# 404 → 路由丢失，故障
+# 000 → 服务不可达
+
+# 错误：只看首页
+curl -o /dev/null -w '%{http_code}\n' https://站点/
+# 200 只说明 nginx 活着，不代表 API 能用</code></pre>
+</div>
+<h2>三、三种处理方式，从便宜到贵</h2>
 <h3>方式一：客户端加重试（最省事，但没用）</h3>
 <pre><code>
 for (let i = 0; i &lt; 3; i++) {
@@ -96,7 +155,7 @@ try {
 <p>应用只认一个地址，代理负责选站、切换、回切。<strong>应用代码一行不改。</strong></p>
 <p>代价是多一跳（本地，通常 <2ms，可忽略）和一个需要维护的进程。</p>
 <p>---</p>
-<h2>三、设计这一层时，最关键的是「什么该切，什么不该切」</h2>
+<h2>四、设计这一层时，最关键的是「什么该切，什么不该切」</h2>
 <p>这是我踩过最深的坑。一开始我写的是「任何错误都切下一家」，结果：</p>
 <table>
 <tr><th>场景</td><td>无脑切换的后果</th></tr>
@@ -118,7 +177,7 @@ try {
 </table>
 <p>这条规则写进代码只需要几个 if，但它决定了你的代理是「有用」还是「有害」。</p>
 <p>---</p>
-<h2>四、还有一个隐蔽问题：失败了要不要标记</h2>
+<h2>五、还有一个隐蔽问题：失败了要不要标记</h2>
 <p>「这次失败了就永久不用它」和「这次失败了下秒还用它」都不对。</p>
 <p>我最后用的策略是<strong>连续失败计数 + 冷却期</strong>：</p>
 <pre><code>
@@ -130,7 +189,7 @@ try {
 <p>为什么是「连续」而不是「累计」：累计计数会让一个偶发失败的站永远翻不了身；连续计数能区分「偶尔抽风」和「真的挂了」。</p>
 <p>为什么要有冷却而不是直接剔除：上游会恢复。你不给它恢复的机会，就等于永久损失一个节点。</p>
 <p>---</p>
-<h2>五、流式输出是最麻烦的部分</h2>
+<h2>六、流式输出是最麻烦的部分</h2>
 <p>非流式请求失败很好处理——重发就行。流式不一样：</p>
 <pre><code>
 data: {"choices":[{"delta":{"content":"今天"}}]}
@@ -143,7 +202,7 @@ data: {"choices":[{"delta":{"content":"天气"}}]}
 <p>2. <strong>续写</strong>：把已输出内容作为 assistant 消息塞回上下文，让模型接着写</p>
 <p>我在实现里选了第一种——因为在代理层做「智能续写」会引入新的不确定行为，而代理的定位应该是<strong>透明</strong>。</p>
 <p>---</p>
-<h2>六、自己实现的话，最小可用版本长什么样</h2>
+<h2>七、自己实现的话，最小可用版本长什么样</h2>
 <p>我写了一个，8KB，零依赖（只用 Node 内置模块）。核心就三件事：</p>
 <pre><code>
 // 1. 按权重挑顺序
@@ -176,7 +235,7 @@ return json502(errors);
 }
 </code></pre>
 <p>---</p>
-<h2>七、两个实现时踩的坑（别人大概也会踩）</h2>
+<h2>八、两个实现时踩的坑（别人大概也会踩）</h2>
 <h3>坑一：`content-length` 和 `transfer-encoding` 同时存在</h3>
 <p>代理转发时把请求体读成了完整 buffer，就应该用 <code>content-length</code> 重发。如果同时保留了原始的 <code>transfer-encoding: chunked</code>，<strong>上游服务器会直接返回 400</strong>，而且不会告诉你原因。</p>
 <p>我在这上面浪费了半小时，最后是打印上游收到的原始请求才发现的。</p>
@@ -184,7 +243,7 @@ return json502(errors);
 <p>用户的配置里 <code>baseUrl</code> 常常已经带 <code>/v1</code>（比如 <code>https://site/v1</code>），而客户端请求的路径也带 <code>/v1</code>（<code>/v1/chat/completions</code>）。直接拼接变成 <code>/v1/v1/chat/completions</code> → 全部 404。</p>
 <p>修法是拼接前做一次前缀去重。</p>
 <p>---</p>
-<h2>八、要不要自己做一个</h2>
+<h2>九、要不要自己做一个</h2>
 <p>三个判断标准：</p>
 <table>
 <tr><th>你的情况</td><td>建议</th></tr>
@@ -194,7 +253,7 @@ return json502(errors);
 </table>
 <p><strong>第三种情况我要多说一句</strong>：代理层解决的是「上游挂了自动切」，但解决不了「所有上游都挂了」。真到了那一步，你需要的是「降级策略」——比如用小模型顶上、或者直接告诉用户「稍后再试」，而不是让请求卡在那里转圈。</p>
 <p>---</p>
-<h2>九、代码</h2>
+<h2>十、代码</h2>
 <p>我把自己用的实现开源了，MIT，零依赖，带自测（<code>node test.mjs</code> 会启动三个假上游验证切换逻辑）：</p>
 <p><strong>https://github.com/huangjinpeng216/relay-failover</strong></p>
 <pre><code>
@@ -206,7 +265,7 @@ node server.mjs
 <p>然后把客户端的 <code>base_url</code> 指向 <code>http://127.0.0.1:8787/v1</code> 即可。</p>
 <p>示例配置里默认填了一个中转站（我运营的那个），你可以留着也可以全换成自己的——它只是个示例。</p>
 <p>---</p>
-<h2>十、最后一句</h2>
+<h2>十一、最后一句</h2>
 <p>故障转移不是什么高深技术，一个下午就能写完。但它解决的是一类<strong>会持续发生、且发生时你毫无准备</strong>的问题。</p>
 <p>如果你现在正在用第三方 API 做东西，我建议你至少想一遍：</p>
 <blockquote>如果这个站明天早上打不开了，我的应用会怎样？</blockquote>
