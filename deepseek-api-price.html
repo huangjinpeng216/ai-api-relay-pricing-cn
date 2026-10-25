@@ -35,6 +35,15 @@ a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
   pre code{word-break:normal}
   img{max-width:100%;height:auto}
   ul,ol{padding-left:20px}
+}.pagenav{border-top:1px solid var(--line);margin-top:34px;padding-top:16px}
+.pagenav>p{font-size:14px;color:var(--mut);margin:0 0 8px}
+.pagenav>ul{list-style:none;padding:0;margin:0;display:flex;flex-wrap:wrap;gap:8px 18px}
+.pagenav>ul li{font-size:14.5px}
+.pagenav a{color:var(--acc);text-decoration:none}
+.pagenav a:hover{text-decoration:underline}
+@media (max-width:640px){
+  .pagenav>ul{gap:6px 14px}
+  .pagenav>ul li{font-size:13.5px}
 }</style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"DeepSeek API 价格怎么算｜V4.1-Flash 计费、倍率与省钱方法（2026）","description":"DeepSeek API 多少钱？V4.1-Flash-1017 的 token 计费方式、input/output 分别怎么算、倍率 0.1x 意味着什么、如何估算自己一个月要花多少。附常见省钱做法与避坑提醒。","inLanguage":"zh-CN","datePublished":"2026-10-26","dateModified":"2026-10-26","author":{"@type":"Organization","name":"l7shop","url":"https://l7shop.xyz"},"mainEntityOfPage":{"@type":"WebPage","@id":"https://huangjinpeng216.github.io/ai-api-relay-pricing-cn/deepseek-api-price.html"}}</script>
 </head>
@@ -147,6 +156,18 @@ a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
 <p>倍率不是唯一变量。<strong>掺水降智</strong>（宣传满血实际降级小模型）会让你的实际成本翻倍，因为你要重试更多次。选站之前，先用一段需要多步推理的 prompt 在官方和该站各跑一次做对比。</p>
 <p>详细的选站标准和配置步骤见 <a href="./">比价与选站指南</a>。</p>
 
+<nav class="pagenav">
+  <p>相关内容</p>
+  <ul>
+    <li><a href="./">比价与选站指南</a></li>
+    <li><a href="api-price-table.html">官方价格表</a></li>
+    <li><a href="cost-calculator.html">成本计算器</a></li>
+    <li><a href="model-selector.html">模型选择器</a></li>
+    <li><a href="api-relay-pitfalls.html">避雷指南</a></li>
+    <li><a href="client-setup.html">客户端配置</a></li>
+    <li><a href="api-error-codes.html">报错大全</a></li>
+  </ul>
+</nav>
 <div class="note">
 <p>本页由 <a href="https://l7shop.xyz" rel="nofollow">l7shop.xyz</a> 维护，内容为信息汇总，不构成推荐或担保。价格请以官方公示为准。</p>
 <p><a href="./">← 返回 AI API 中转站比价与选站指南</a></p>
