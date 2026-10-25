@@ -37,6 +37,15 @@ a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
   pre code{word-break:normal}
   img{max-width:100%;height:auto}
   ul,ol{padding-left:20px}
+}.pagenav{border-top:1px solid var(--line);margin-top:34px;padding-top:16px}
+.pagenav>p{font-size:14px;color:var(--mut);margin:0 0 8px}
+.pagenav>ul{list-style:none;padding:0;margin:0;display:flex;flex-wrap:wrap;gap:8px 18px}
+.pagenav>ul li{font-size:14.5px}
+.pagenav a{color:var(--acc);text-decoration:none}
+.pagenav a:hover{text-decoration:underline}
+@media (max-width:640px){
+  .pagenav>ul{gap:6px 14px}
+  .pagenav>ul li{font-size:13.5px}
 }</style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"TechArticle","headline":"AI API 中转站避雷指南｜跑路、掺水降智、限流的识别方法（2026）","description":"AI API 中转站常见坑：跑路、掺水降智、偷偷限流、虚标模型、扣费不透明。每一项给出可执行的识别方法和小额测试方案，附充值与 key 管理的安全习惯。","inLanguage":"zh-CN","datePublished":"2026-10-26","dateModified":"2026-10-26","author":{"@type":"Organization","name":"l7shop","url":"https://l7shop.xyz"},"mainEntityOfPage":{"@type":"WebPage","@id":"https://huangjinpeng216.github.io/ai-api-relay-pricing-cn/api-relay-pitfalls.html"}}</script>
 </head>
@@ -227,6 +236,17 @@ echo "$(date '+%F %T'),$(curl -s -o /dev/null -w '%{http_code}' https://站点/v
 <p>没有「绝对安全」的中转站，只有<strong>把损失控制在可承受范围</strong>的用法：小额、勤充、留日志、备一家。按这个习惯用，就算踩坑也只是几十块的事。</p>
 <p>选站标准和配置步骤见 <a href="./">AI API 中转站比价与选站指南</a>。</p>
 
+<nav class="pagenav">
+  <p>相关内容</p>
+  <ul>
+    <li><a href="./">比价与选站指南</a></li>
+    <li><a href="api-price-table.html">官方价格表</a></li>
+    <li><a href="cost-calculator.html">成本计算器</a></li>
+    <li><a href="model-selector.html">模型选择器</a></li>
+    <li><a href="client-setup.html">客户端配置</a></li>
+    <li><a href="api-error-codes.html">报错大全</a></li>
+  </ul>
+</nav>
 <div class="note">
 <p>本页由 <a href="https://l7shop.xyz" rel="nofollow">l7shop.xyz</a> 维护。上文的识别方法适用于任何一家中转站，包括我们；欢迎拿这套标准来测。</p>
 <p><a href="./">← 返回总览</a>　｜　<a href="api-relay-recommend.html">中转站推荐与比价 →</a></p>
