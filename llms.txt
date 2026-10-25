@@ -36,6 +36,7 @@
 
 - [成本计算器](https://huangjinpeng216.github.io/ai-api-relay-pricing-cn/cost-calculator.html)：填入用量和单价，算每月花多少、各档倍率差多少
 - [模型选择器](https://huangjinpeng216.github.io/ai-api-relay-pricing-cn/model-selector.html)：回答 4 个问题，推荐该用哪个模型
+- [客户端配置生成器](https://huangjinpeng216.github.io/ai-api-relay-pricing-cn/config-generator.html)：选客户端填地址，生成正确的 base_url / 环境变量 / curl 命令
 
 ## 高可用
 
