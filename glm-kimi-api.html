@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GLM-5.3 / Kimi K3 API 怎么接入｜模型定位、上下文与调用示例（2026）</title>
+<meta name="description" content="GLM-5.3 与 Kimi K3 的定位差异、适用场景、上下文长度、API 调用方式与模型名写法。附同一段任务在两款模型上的选择建议，以及接入第三方网关时的配置要点。">
+<meta name="keywords" content="GLM-5.3 API,Kimi K3 API,GLM 接入,长文档分析模型,中文写作模型,API 模型选择">
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="https://huangjinpeng216.github.io/ai-api-relay-pricing-cn/glm-kimi-api.html">
+<style>
+:root{--bg:#0f172a;--card:#1e293b;--line:#334155;--tx:#e2e8f0;--mut:#94a3b8;--acc:#38bdf8}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.75 -apple-system,"PingFang SC","Microsoft YaHei",sans-serif}
+.wrap{max-width:840px;margin:0 auto;padding:48px 20px 80px}
+h1{font-size:29px;line-height:1.4;margin:0 0 10px}
+h2{font-size:20px;margin:36px 0 10px;padding-left:12px;border-left:4px solid var(--acc)}
+h3{font-size:17px;margin:22px 0 6px;color:#e2e8f0}
+p,li{color:#cbd5e1}.sub{color:var(--mut);margin:0 0 26px}
+code{background:#0b1220;border:1px solid var(--line);border-radius:6px;padding:2px 6px;font-size:14px;color:#7dd3fc}
+pre{background:#0b1220;border:1px solid var(--line);border-radius:10px;padding:14px;overflow:auto}
+pre code{border:0;background:none;padding:0}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:15px}
+th,td{border:1px solid var(--line);padding:10px 12px;text-align:left;vertical-align:top}th{background:#172033}
+a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 20px;margin:14px 0}
+.note{font-size:14px;color:var(--mut);border-top:1px solid var(--line);margin-top:32px;padding-top:14px}
+</style>
+</head>
+<body><div class="wrap">
+
+<h1>GLM-5.3 与 Kimi K3 怎么选、怎么接</h1>
+<p class="sub">定位差异 · 适用场景 · 调用方式 · 模型名写法　<span>｜<a href="./">返回比价指南</a></span></p>
+
+<div class="card">
+<p><strong>一句话选型：</strong>中文写作、翻译、公文类任务用 <strong>GLM-5.3</strong>；整本 PDF、长报告、多文档交叉分析用 <strong>Kimi K3</strong>；写代码和改 bug 用 DeepSeek 的 Flash 版更划算。三者可以同时配在一个客户端里，按任务切换。</p>
+</div>
+
+<h2>一、两者的定位差别</h2>
+<table>
+<tr><th>维度</th><th>GLM-5.3</th><th>Kimi K3</th></tr>
+<tr><td>强项</td><td>中文语感、写作、翻译、结构化输出</td><td>超长上下文、长文档理解、信息抽取</td></tr>
+<tr><td>典型任务</td><td>公文、文案、改写、摘要、术语统一</td><td>整本 PDF、合同比对、多文档综述</td></tr>
+<tr><td>响应速度</td><td>中等</td><td>长输入时首字较慢，属正常</td></tr>
+<tr><td>成本感受</td><td>中等</td><td>长文本场景 note 较大，注意控制输入</td></tr>
+</table>
+
+<h2>二、模型名怎么写</h2>
+<p>调用时必须用站点列出的准确名称。常见写法（以各站公示为准）：</p>
+<pre><code>glm-5.3
+glm-5.3-flash
+kimi-k3</code></pre>
+<p class="sub">注意大小写和连字符。自己猜的名字会直接报 <code>model not found</code>，报错排查见 <a href="api-error-codes.html">报错大全</a>。</p>
+
+<h2>三、调用示例（OpenAI 兼容格式）</h2>
+<pre><code>curl https://你的站点/v1/chat/completions \
+  -H "Authorization: Bearer sk-xxx" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "glm-5.3",
+    "messages": [
+      {"role": "user", "content": "把下面这段改成正式的公文体"}
+    ]
+  }'</code></pre>
+<p>换成 Kimi 只需把 <code>model</code> 改成 <code>kimi-k3</code>，其余不变。</p>
+
+<h2>四、长文档任务怎么用 Kimi</h2>
+<p>长上下文的正确用法不是「把整个 PDF 塞进去问一句」。更省钱也更准的做法：</p>
+<ol>
+<li><strong>先分段摘要</strong>：逐章生成摘要，再把摘要合并</li>
+<li><strong>只喂相关片段</strong>：先用关键词检索定位到相关段落</li>
+<li><strong>明确输出结构</strong>：告诉它要表格还是分点，能显著减少输出 token</li>
+</ol>
+<p>这样即使上下文窗口很大，也能把单次成本压下来。</p>
+
+<h2>五、同一条 prompt 怎么选模型</h2>
+<table>
+<tr><th>你的任务</th><th>建议</th></tr>
+<tr><td>写周报、改简历、翻译合同</td><td>GLM-5.3</td></tr>
+<tr><td>读完 200 页 PDF 提炼要点</td><td>Kimi K3</td></tr>
+<tr><td>写代码、修 bug、解释报错</td><td>DeepSeek Flash 版</td></tr>
+<tr><td>批量格式转换（几百条）</td><td>选单价最低的，并做好重试</td></tr>
+<tr><td>需要多步推理的复杂问题</td><td>DeepSeek 推理版</td></tr>
+</table>
+
+<h2>六、接入第三方网关时注意</h2>
+<ul>
+<li>确认站点同时支持你需要的模型，不要只看有一个</li>
+<li>确认模型名与站点列表一致，不同站可能命名略有差别</li>
+<li>长文本任务要留意站点是否有单请求 token 上限</li>
+<li>批量任务前先跑 10 次，看延迟分布和失败率</li>
+</ul>
+
+<div class="note">
+<p>本页由 <a href="https://l7shop.xyz" rel="nofollow">l7shop.xyz</a> 维护。模型能力与价格以各家官方公告为准，本页仅作选型参考。</p>
+<p><a href="./">← 返回比价与选站指南</a>　｜　<a href="deepseek-api-price.html">DeepSeek 价格怎么算 →</a></p>
+</div>
+
+</div></body></html>
