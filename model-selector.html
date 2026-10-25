@@ -117,6 +117,47 @@ a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
 <li><strong>长上下文不等于省钱。</strong>把整本 PDF 塞进去，输入 token 会爆。分段摘要通常更便宜也更准。</li>
 </ul>
 
+<h2>各模型能力速览</h2>
+<p class="sub">下表中的「强 / 中 / 弱」是相对定位，不是绝对评分。同系列不同版本差异很大，以官方文档为准。</p>
+<table>
+<tr><th>能力维度</th><th>DeepSeek Flash 版</th><th>DeepSeek 推理版</th><th>GLM 系列</th><th>Kimi 系列</th></tr>
+<tr><td>代码生成与调试</td><td>强</td><td>强</td><td>中</td><td>中</td></tr>
+<tr><td>中文写作与公文</td><td>中</td><td>中</td><td><b>强</b></td><td>中</td></tr>
+<tr><td>长文档理解</td><td>中</td><td>中</td><td>中</td><td><b>强</b></td></tr>
+<tr><td>多步推理与数学</td><td>中</td><td><b>强</b></td><td>中</td><td>中</td></tr>
+<tr><td>响应速度</td><td><b>快</b></td><td>慢</td><td>中</td><td>长输入时慢</td></tr>
+<tr><td>单价水平</td><td><b>低</b></td><td>高</td><td>中</td><td>中</td></tr>
+<tr><td>适合调用频次</td><td>高（每天几十上百次）</td><td>低（关键任务才用）</td><td>中</td><td>低（单次输入大）</td></tr>
+</table>
+
+<h2>四个常见选型误区</h2>
+
+<h3>误区一：一律用最强/最贵的模型</h3>
+<p>写周报、改错别字、批量格式化这类任务，用推理版不会让结果更好，只会更慢更贵。<strong>模型能力和任务难度要匹配</strong>，不是越强越好。</p>
+
+<h3>误区二：只看单价，不看实际消耗</h3>
+<p>单价低的模型如果回答冗长、需要反复追问，实际 token 消耗可能比单价高的模型更多。真正的成本要按「完成同一件事消耗多少 token」来算，可以用 <a href="cost-calculator.html">成本计算器</a> 估算。</p>
+
+<h3>误区三：以为长上下文就等于省钱</h3>
+<p>把整本 PDF 塞进对话框，输入 token 会非常大。更省钱也更准的做法是<strong>分段摘要再合并</strong>，或者先用关键词检索定位到相关段落再喂给模型。</p>
+
+<h3>误区四：忽略客户端支持的协议</h3>
+<p>Claude Code、Codex CLI 这类命令行工具走 Anthropic 协议，只能接提供 Anthropic 兼容接口的服务。选平台前先确认，否则买完用不了。</p>
+
+<h2>常见问题</h2>
+
+<h3>Q：写代码到底该用 Flash 版还是推理版？</h3>
+<p>日常写代码、读报错、改 bug 用 Flash 版就够，响应快、单价低。只有遇到需要理解复杂业务逻辑、跨文件重构这类任务，才值得切到推理版。</p>
+
+<h3>Q：GLM 和 Kimi 能同时用吗？</h3>
+<p>可以，而且推荐这样做。绝大多数客户端支持配置多个模型，按任务切换即可——写文案用 GLM，读长文档切 Kimi，写代码切 DeepSeek。</p>
+
+<h3>Q：怎么判断某个模型是不是被降级了？</h3>
+<p>用同一段需要多步推理的 prompt，在官方渠道和第三方各跑一次，对比输出质量、思考深度和首字延迟。差距明显就是被降级了。</p>
+
+<h3>Q：同一个任务，不同模型的输出差异大吗？</h3>
+<p>中文写作类任务差异明显（语感、用词习惯不同）；纯代码任务差异较小，更多体现在边界情况的处理和解释质量上。</p>
+
 <div class="note">
 <p>本页由 <a href="https://l7shop.xyz" rel="nofollow">l7shop.xyz</a> 维护。推荐逻辑是通用经验，不构成对任何模型的性能承诺；同系列不同版本能力有差异，请以官方文档为准。</p>
 <p><a href="./">← 返回比价与选站指南</a>　·　<a href="cost-calculator.html">成本计算器</a>　·　<a href="glm-kimi-api.html">GLM / Kimi 怎么接</a></p>
