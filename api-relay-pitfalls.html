@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI API 中转站避雷指南｜跑路、掺水降智、限流的识别方法（2026）</title>
+<meta name="description" content="AI API 中转站常见坑：跑路、掺水降智、偷偷限流、虚标模型、扣费不透明。每一项给出可执行的识别方法和小额测试方案，附充值与 key 管理的安全习惯。">
+<meta name="keywords" content="API中转站避雷,中转站跑路,AI API 骗局,掺水降智,API 中转站 靠谱,中转站识别">
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="https://huangjinpeng216.github.io/ai-api-relay-pricing-cn/api-relay-pitfalls.html">
+<style>
+:root{--bg:#0f172a;--card:#1e293b;--line:#334155;--tx:#e2e8f0;--mut:#94a3b8;--acc:#38bdf8;--warn:#f97316}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.75 -apple-system,"PingFang SC","Microsoft YaHei",sans-serif}
+.wrap{max-width:840px;margin:0 auto;padding:48px 20px 80px}
+h1{font-size:30px;line-height:1.35;margin:0 0 10px}
+h2{font-size:21px;margin:40px 0 12px;padding-left:12px;border-left:4px solid var(--acc)}
+h3{font-size:17px;margin:26px 0 8px;color:#e2e8f0}
+p,li{color:#cbd5e1}.sub{color:var(--mut);margin:0 0 28px}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:15px}
+th,td{border:1px solid var(--line);padding:10px 12px;text-align:left}th{background:#172033}
+code{background:#0b1220;border:1px solid var(--line);border-radius:6px;padding:2px 6px;font-size:14px;color:#7dd3fc}
+a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 22px;margin:16px 0}
+.bad{border-left:4px solid var(--warn)}
+.note{font-size:14px;color:var(--mut);border-top:1px solid var(--line);margin-top:34px;padding-top:14px}
+</style>
+</head>
+<body><div class="wrap">
+
+<h1>AI API 中转站避雷指南</h1>
+<p class="sub">跑路 · 掺水降智 · 偷偷限流 · 扣费不透明　<span>｜<a href="./">比价与选站总览</a></span></p>
+
+<div class="card">
+<p>中转站这个市场的信息极度不对称：你付了钱，但看不到背后的上游。下面五类坑，按「踩了之后损失从大到小」排序，每一条都给出可执行的识别方法。</p>
+</div>
+
+<h2>坑一：跑路（损失最大）</h2>
+<div class="card bad">
+<p><strong>表现：</strong>站点突然打不开、域名过期、余额清零、客服消失。通常发生在你刚充了大额之后。</p>
+<p><strong>识别方法：</strong></p>
+<ul>
+<li>看域名注册时间——建站不到 3 个月的，不要充大额</li>
+<li>看是否有公开的运营痕迹（更新日志、用户群、社群反馈）</li>
+<li>看充值档位——只推大额套餐、刻意引导高充的，风险更高</li>
+</ul>
+<p><strong>防御：</strong>一次只充够两周用量，用完再充。这是唯一真正有效的办法。</p>
+</div>
+
+<h2>坑二：掺水降智（最隐蔽）</h2>
+<div class="card bad">
+<p><strong>表现：</strong>宣传是满血模型，实际把你的请求转发给小模型，或者降低 max_tokens、截断上下文。账单照收，效果打折。</p>
+<p><strong>识别方法：</strong>准备一段<strong>需要多步推理</strong>的 prompt（不要用「你好」这种），在官方和该站各跑一次，对比：</p>
+<ul>
+<li>输出质量是否明显下降</li>
+<li>是否容易答错简单逻辑题</li>
+<li>首字延迟是否异常快（小模型更快）</li>
+<li>同样 prompt 连续跑 5 次，结果是否高度趋同（降级模型多样性差）</li>
+</ul>
+</div>
+
+<h2>坑三：偷偷限流</h2>
+<div class="card bad">
+<p><strong>表现：</strong>并发一高就 429，或者白天正常、晚上疯狂超时。宣传「不限并发」但实际有隐性阈值。</p>
+<p><strong>识别方法：</strong>用脚本发 10 个并发请求，看失败率和延迟分布。单次调用测不出这个问题。</p>
+</div>
+
+<h2>坑四：扣费不透明</h2>
+<div class="card bad">
+<p><strong>表现：</strong>看不到每次调用的 token 数；只给一个总额；倍率在账单里不体现。</p>
+<p><strong>识别方法：</strong>充最小额，跑 10 次已知长度的请求，自己算理论消耗，和实际扣费对比。差得多就是有问题。</p>
+<p><strong>防御：</strong>只选能查调用日志的站。</p>
+</div>
+
+<h2>坑五：Key 泄露与盗刷</h2>
+<div class="card bad">
+<p><strong>表现：</strong>余额在半夜被刷光，日志里出现你没发过的请求。</p>
+<p><strong>识别方法：</strong>定期看调用日志的时间分布。异常时段（凌晨 2-5 点）的大量请求要警惕。</p>
+<p><strong>防御：</strong></p>
+<ul>
+<li>Key 只放环境变量，绝不提交进代码仓库</li>
+<li>不同项目用不同的 Key，方便单独吊销</li>
+<li>给 Key 设额度上限</li>
+<li>发现泄露立刻删 Key 重建</li>
+</ul>
+</div>
+
+<h2>一张自查表</h2>
+<table>
+<tr><th>检查项</th><th>合格标准</th></tr>
+<tr><td>域名年龄</td><td>≥ 6 个月，或有清晰的运营历史</td></tr>
+<tr><td>充值策略</td><td>支持小额起充，不强制大额套餐</td></tr>
+<tr><td>调用日志</td><td>能查每次的 token 数、时间、模型名</td></tr>
+<tr><td>倍率透明度</td><td>官网明示倍率，账单能对上</td></tr>
+<tr><td>协议</td><td>OpenAI + Anthropic 双协议</td></tr>
+<tr><td>压力表现</td><td>10 并发无明显失败</td></tr>
+<tr><td>模型质量</td><td>多步推理 prompt 输出与官方接近</td></tr>
+</table>
+
+<h2>最后一句</h2>
+<p>没有「绝对安全」的中转站，只有<strong>把损失控制在可承受范围</strong>的用法：小额、勤充、留日志、备一家。按这个习惯用，就算踩坑也只是几十块的事。</p>
+<p>选站标准和配置步骤见 <a href="./">AI API 中转站比价与选站指南</a>。</p>
+
+<div class="note">
+<p>本页由 <a href="https://l7shop.xyz" rel="nofollow">l7shop.xyz</a> 维护。上文的识别方法适用于任何一家中转站，包括我们；欢迎拿这套标准来测。</p>
+<p><a href="./">← 返回总览</a>　｜　<a href="api-relay-recommend.html">中转站推荐与比价 →</a></p>
+</div>
+
+</div></body></html>
