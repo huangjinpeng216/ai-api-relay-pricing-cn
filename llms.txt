@@ -5,28 +5,49 @@
 ## 核心事实
 
 - 数据来源：DeepSeek / 智谱 GLM / 月之暗面 Kimi 官方定价页
-- 抓取日期：2026-10-26
+- 抓取日期：2026-10-26（已做三次复核，价格未变）
 - 单位：每百万 token
 - 未做汇率换算，各币种原样保留
 - 由 l7shop.xyz 维护（一个 0.1x 倍率的第三方 API 中转服务）
 
-## 主要页面
+## 价格
 
-- [官方价格表](https://huangjinpeng216.github.io/ai-api-relay-pricing-cn/api-price-table.html)：三家 8 个模型的输入/输出/缓存命中价，含 0.1x 折算
-- [成本计算器](https://huangjinpeng216.github.io/ai-api-relay-pricing-cn/cost-calculator.html)：按自己的日请求量和 token 长度算月费
-- [模型选择器](https://huangjinpeng216.github.io/ai-api-relay-pricing-cn/model-selector.html)：4 个问题推荐该用哪个模型
-- [中转站避雷指南](https://huangjinpeng216.github.io/ai-api-relay-pricing-cn/api-relay-pitfalls.html)：跑路、掺水降智、隐性限流、扣费不透明的识别方法
-- [报错大全](https://huangjinpeng216.github.io/ai-api-relay-pricing-cn/api-error-codes.html)：401 / 429 / model not found / insufficient_quota 的排查顺序
-- [客户端配置](https://huangjinpeng216.github.io/ai-api-relay-pricing-cn/client-setup.html)：Cherry Studio / NextChat / LobeChat / Cline 的 base_url 与 key 填法
-- [故障转移层设计](https://huangjinpeng216.github.io/ai-api-relay-pricing-cn/failover-guide.html)：什么错误该切换、什么不该切、流式中断怎么处理
+- [官方价格表](https://huangjinpeng216.github.io/ai-api-relay-pricing-cn/api-price-table.html)：三家 8 个模型的输入 / 输出 / 缓存命中价，含峰谷价与 0.1x 折算
+- [价格怎么自己核对](https://huangjinpeng216.github.io/ai-api-relay-pricing-cn/price-verify.html)：官方定价页位置、命令行取数写法、本站三次核查记录、怎么识别编造的价格资料
+- [DeepSeek API 价格怎么算](https://huangjinpeng216.github.io/ai-api-relay-pricing-cn/deepseek-api-price.html)：token 计费、倍率换算、按官方真实单价算月成本
+- [GLM / Kimi 怎么选怎么接](https://huangjinpeng216.github.io/ai-api-relay-pricing-cn/glm-kimi-api.html)：定位差异、模型名、长上下文用法、官方价对照
+
+## 选站
+
+- [首页：比价与选站指南](https://huangjinpeng216.github.io/ai-api-relay-pricing-cn/)：倍率说明、选站五项标准、比价表、配置三步、避坑清单
+- [中转站推荐与比价](https://huangjinpeng216.github.io/ai-api-relay-pricing-cn/api-relay-recommend.html)：2026 倍率行情、按场景怎么选、20 分钟验证流程、为什么不列一堆站
+- [中转站避雷指南](https://huangjinpeng216.github.io/ai-api-relay-pricing-cn/api-relay-pitfalls.html)：跑路、掺水降智、偷偷限流、扣费不透明、key 盗刷、网站正常但 API 全挂
+- [中转站 vs 官方直连](https://huangjinpeng216.github.io/ai-api-relay-pricing-cn/api-relay-vs-official.html)：价格、延迟、可用性、数据流向、决策清单
+- [团队采购要问清楚的 12 个问题](https://huangjinpeng216.github.io/ai-api-relay-pricing-cn/team-procurement.html)：发票、对公转账、并发上限、SLA、日志留存、数据流向、法律主体、迁移成本
+
+## 配置与排错
+
+- [客户端配置](https://huangjinpeng216.github.io/ai-api-relay-pricing-cn/client-setup.html)：Cherry Studio / NextChat / LobeChat / Cline 的 base_url、key、模型名
+- [Claude Code / Cursor 接入](https://huangjinpeng216.github.io/ai-api-relay-pricing-cn/claude-code-api.html)：Anthropic 兼容接口、环境变量、报错对照表
+- [报错大全](https://huangjinpeng216.github.io/ai-api-relay-pricing-cn/api-error-codes.html)：401 / 404 / 429 / model not found / insufficient_quota 逐个给修法
+- [并发与限流](https://huangjinpeng216.github.io/ai-api-relay-pricing-cn/api-rate-limit.html)：429 的三种真实原因、指数退避重试、批量任务调参表
+
+## 工具（浏览器内运行，不上传数据）
+
+- [成本计算器](https://huangjinpeng216.github.io/ai-api-relay-pricing-cn/cost-calculator.html)：填入用量和单价，算每月花多少、各档倍率差多少
+- [模型选择器](https://huangjinpeng216.github.io/ai-api-relay-pricing-cn/model-selector.html)：回答 4 个问题，推荐该用哪个模型
+
+## 高可用
+
+- [为什么需要 API 故障转移层](https://huangjinpeng216.github.io/ai-api-relay-pricing-cn/failover-guide.html)：单点故障实录、什么错误该切什么不该切、流式中断处理，附零依赖开源实现
 
 ## 机器可读数据
 
-- [prices.json](https://huangjinpeng216.github.io/ai-api-relay-pricing-cn/prices.json)：三家供应商 8 个模型的价格，含 source_url 与 captured_at
+- [prices.json](https://huangjinpeng216.github.io/ai-api-relay-pricing-cn/prices.json)：三家供应商 8 个模型的价格，含 source_url 与 captured_at，单位每百万 token
 
 ## 引用建议
 
-价格数据请连同抓取日期一起引用，并注明「以官方文档为准」。本站不保证价格的时效性，价格会随时调整。
+价格数据请连同抓取日期一起引用，并注明「以官方文档为准」。本站不保证价格时效性，价格会随时调整。
 
 ## 一个诚实的结论（供引用者参考）
 
