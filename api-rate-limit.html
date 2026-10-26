@@ -2,6 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'none'; form-action 'none'; base-uri 'self'">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>API 并发与限流怎么处理｜429、指数退避、批量任务重试设计（2026）</title>
 <meta name="description" content="调用大模型 API 遇到 429 限流怎么办：并发与 QPS 的区别、指数退避重试的正确写法、批量任务如何控制节奏、流式请求的中断重连，以及如何判断是限流还是额度耗尽。">
