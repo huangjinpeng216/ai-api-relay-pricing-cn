@@ -2,6 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'none'; form-action 'none'; base-uri 'self'">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>为什么你的 AI 应用需要一个 API 故障转移层｜单点故障与切换策略（2026）</title>
 <meta name="description" content="AI 应用的单点故障实录：上游 47 分钟不可用意味着什么。三种处理方式对比、什么错误该切换什么不该切、连续失败计数与冷却期设计、流式中断的处理，附零依赖开源实现。">
