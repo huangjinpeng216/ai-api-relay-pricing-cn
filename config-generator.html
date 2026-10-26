@@ -170,6 +170,11 @@ a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
 
   function normBase(raw) {
     var b = (raw || '').trim().replace(/\/+$/, '');
+    if (!b) return b;
+    // 用户常只粘贴域名，没有协议头。没有 http/https 就补 https://
+    if (!/^https?:\/\//i.test(b)) {
+      b = 'https://' + b;
+    }
     return b;
   }
   function withV1(b) {
